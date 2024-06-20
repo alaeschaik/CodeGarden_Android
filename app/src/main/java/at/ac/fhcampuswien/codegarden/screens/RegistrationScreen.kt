@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.codegarden.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -11,7 +12,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,11 +20,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import at.ac.fhcampuswien.codegarden.navigation.Screen
 
 @Composable
-fun RegistrationScreenContent(
+fun RegistrationScreen(
+    navController: NavController,
     onRegister: () -> Unit,
-    onBackToLogin: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -130,11 +132,14 @@ fun RegistrationScreenContent(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextButton(
-            onClick = onBackToLogin,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Back to Login")
-        }
+        // Clickable text to go back to login
+        Text(
+            text = "Back to Login",
+            modifier = Modifier
+                .clickable(onClick = { navController.navigate(Screen.LoginScreen.route) })
+                .padding(8.dp),
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }

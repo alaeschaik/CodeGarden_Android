@@ -1,15 +1,28 @@
+# Ignore IntelliJ IDEA project files and directories
 *.iml
+.idea/
+.DS_Store
+
+# Ignore Gradle files
 .gradle
+/build
+/captures
+
+# Ignore local configuration files
 /local.properties
+
+# Ignore Android Studio specific files
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
+
+# Ignore external native build files
 .externalNativeBuild
 .cxx
+
+# Ignore local properties file
 local.properties
+

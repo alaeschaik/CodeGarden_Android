@@ -9,12 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import at.ac.fhcampuswien.codegarden.navigation.Screen
 
 @Composable
 fun LoginScreen(
+    navController: NavController,
     onLoginClick: (String, String) -> Unit,
-    onPasswordResetClick: () -> Unit,
-    onRegisterClick: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -63,7 +64,7 @@ fun LoginScreen(
         Text(
             text = "Forgot your Password?",
             modifier = Modifier
-                .clickable(onClick = onPasswordResetClick)
+                .clickable(onClick = {navController.navigate(Screen.PasswordResetScreen.route)})
                 .padding(8.dp),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.primary
@@ -73,7 +74,7 @@ fun LoginScreen(
         Text(
             text = "Don't have an account? Sign up here",
             modifier = Modifier
-                .clickable(onClick = onRegisterClick)
+                .clickable(onClick = {navController.navigate(Screen.RegistrationScreen.route)})
                 .padding(8.dp),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.primary

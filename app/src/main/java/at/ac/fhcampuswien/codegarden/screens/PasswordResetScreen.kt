@@ -14,11 +14,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import at.ac.fhcampuswien.codegarden.navigation.Screen
 
 @Composable
 fun PasswordResetScreen(
+    navController: NavController,
     onSendResetLinkClick: (String) -> Unit,
-    onBackToLoginClick: () -> Unit
 ) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
@@ -60,7 +62,7 @@ fun PasswordResetScreen(
         Text(
             text = "Back to Login",
             modifier = Modifier
-                .clickable(onClick = onBackToLoginClick)
+                .clickable(onClick = { navController.navigate(Screen.LoginScreen.route) })
                 .padding(8.dp),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.primary

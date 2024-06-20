@@ -1,5 +1,5 @@
 [versions]
-agp = "8.4.2"
+agp = "8.5.0"
 coilCompose = "2.6.0"
 gson = "2.10.1"
 kotlin = "1.9.21"
@@ -15,7 +15,6 @@ roomVersion = "2.6.1"
 ksp = "1.9.21-1.0.15"
 materialIconsCore = "1.7.0-beta03"
 materialIconsExtended = "1.7.0-beta03"
-animation = "1.7.0-beta03"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

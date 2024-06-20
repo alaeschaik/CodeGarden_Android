@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import at.ac.fhcampuswien.codegarden.screens.CommunityScreen
 import at.ac.fhcampuswien.codegarden.screens.LoginScreen
 import at.ac.fhcampuswien.codegarden.screens.PasswordResetScreen
 import at.ac.fhcampuswien.codegarden.screens.RegistrationScreen
@@ -38,6 +39,12 @@ fun Navigation() {
                 onSendResetLinkClick = { email ->
                     // Handle password reset logic here
                 }
+            )
+        }
+
+        composable(route = Screen.CommunityScreen.route){
+            CommunityScreen(
+                navController = navController
             )
         }
     }

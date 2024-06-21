@@ -51,10 +51,18 @@ android {
 }
 
 dependencies {
+    // Retrofit
+    implementation(libs.retrofit)
+    // Converter for JSON
+    implementation(libs.converter.gson)
+    // Optional: for coroutines support
+    implementation(libs.retrofit2.kotlin.coroutines.adapter)
+
     // Room dependencies
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.protolite.well.known.types)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

@@ -13,36 +13,24 @@ import at.ac.fhcampuswien.codegarden.screens.RegistrationScreen
 fun Navigation() {
     val navController = rememberNavController() // create a NavController instance
 
-    NavHost(navController = navController, // pass the NavController to NavHost
-        startDestination = Screen.LoginScreen.route) {  // pass a start destination
-        composable(route = Screen.LoginScreen.route){
-            LoginScreen(
-                navController = navController,
-                onLoginClick = { username, password ->
-                    // Handle login logic here
-                }
-            )
+    NavHost(
+        navController = navController, // pass the NavController to NavHost
+        startDestination = Screen.LoginScreen.route
+    ) {  // pass a start destination
+        composable(route = Screen.LoginScreen.route) {
+            LoginScreen(navController = navController)
         }
+
 
         composable(route = Screen.RegistrationScreen.route) {
-            RegistrationScreen(
-                navController = navController,
-                onRegister = {
-                    // Handle registration logic here
-                }
-            )
+            RegistrationScreen(navController = navController)
         }
 
-        composable(route = Screen.PasswordResetScreen.route){
-            PasswordResetScreen(
-                navController = navController,
-                onSendResetLinkClick = { email ->
-                    // Handle password reset logic here
-                }
-            )
+        composable(route = Screen.PasswordResetScreen.route) {
+            PasswordResetScreen(navController = navController)
         }
 
-        composable(route = Screen.CommunityScreen.route){
+        composable(route = Screen.CommunityScreen.route) {
             CommunityScreen(
                 navController = navController
             )

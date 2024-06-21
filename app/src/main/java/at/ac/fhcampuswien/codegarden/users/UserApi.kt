@@ -1,0 +1,22 @@
+package at.ac.fhcampuswien.codegarden.users
+
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+
+interface UserApi {
+    @POST("users/login")
+    suspend fun userLogin(@Body request: LoginRequest): Response<LoginResponse>
+
+    @POST("users/register")
+    suspend fun userRegister(@Body request: RegisterRequest): Response<RegisterResponse>
+
+    @GET("users")
+    suspend fun getAllUsers(@Header("Authorization") token: String): Response<List<User>>
+
+    @POST("users/reset-password")
+    suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<Unit>
+}
+

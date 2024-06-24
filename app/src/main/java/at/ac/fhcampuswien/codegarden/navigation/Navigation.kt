@@ -5,7 +5,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import at.ac.fhcampuswien.codegarden.screens.CommunityScreen
+import at.ac.fhcampuswien.codegarden.screens.LeaderBoardScreen
 import at.ac.fhcampuswien.codegarden.screens.LoginScreen
+import at.ac.fhcampuswien.codegarden.screens.ModuleScreen
 import at.ac.fhcampuswien.codegarden.screens.PasswordResetScreen
 import at.ac.fhcampuswien.codegarden.screens.RegistrationScreen
 
@@ -21,7 +23,6 @@ fun Navigation() {
             LoginScreen(navController = navController)
         }
 
-
         composable(route = Screen.RegistrationScreen.route) {
             RegistrationScreen(navController = navController)
         }
@@ -31,9 +32,15 @@ fun Navigation() {
         }
 
         composable(route = Screen.CommunityScreen.route) {
-            CommunityScreen(
-                navController = navController
-            )
+            CommunityScreen(navController = navController)
+        }
+
+        composable(route = Screen.LeaderBoardScreen.route) {
+            LeaderBoardScreen(navController = navController)
+        }
+
+        composable(route = Screen.ModuleScreen.route) {
+            ModuleScreen(navController = navController)
         }
     }
 }

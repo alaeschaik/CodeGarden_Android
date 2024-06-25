@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.codegarden.users
+package at.ac.fhcampuswien.codegarden.endpoints.users
 
 data class LoginRequest(
     val usernameOrEmail: String,
@@ -45,4 +45,11 @@ data class RegisterResponse(
     val lastname: String,
     val xpPoints: Float,
     val createdAt: String
+)
+
+data class UpdateProfileRequest(
+    val username: String?,
+    val email: String?,
+    val firstname: String?,
+    val lastname: String?
 )

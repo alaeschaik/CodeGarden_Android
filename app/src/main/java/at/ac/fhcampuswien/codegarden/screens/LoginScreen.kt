@@ -26,8 +26,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
 import at.ac.fhcampuswien.codegarden.navigation.Screen
-import at.ac.fhcampuswien.codegarden.ui.viewmodels.LoginViewModel
-import at.ac.fhcampuswien.codegarden.ui.viewmodels.viewModelFactory
+import at.ac.fhcampuswien.codegarden.viewModels.LoginViewModel
+import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 
 @Composable
 fun LoginScreen(navController: NavController) {

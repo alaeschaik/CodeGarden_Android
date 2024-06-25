@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.codegarden.users
+package at.ac.fhcampuswien.codegarden.endpoints.users
 
 import android.content.Context
 import android.widget.Toast
@@ -14,8 +14,8 @@ interface UserService {
         lastname: String
     ): Boolean
 
-    suspend fun getUserProfile(userId: Int)
-    suspend fun getAllUsers()
+    suspend fun getUserProfile(userId: Int): User?
+    suspend fun getAllUsers(): List<User>
     suspend fun resetPassword(username: String, oldPassword: String, newPassword: String): Boolean
     suspend fun updateUserProfile(
         username: String?,
@@ -33,21 +33,19 @@ class UserServiceImpl(
 
     override suspend fun userLogin(username: String, password: String): Boolean {
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(context, "Please enter username and password", Toast.LENGTH_LONG).show()
+            showToast("Please enter username and password")
             return false
         }
 
         sharedPrefManager.saveCredentials(username, password)
         val response = userApi.userLogin(LoginRequest(username, password))
 
-        if (response.isSuccessful) {
-            response.body()?.let {
-                sharedPrefManager.saveUserDetails(it.id, it.token, it.expiresAt)
-                return true
-            }
+        response.body()?.let {
+            sharedPrefManager.saveUserDetails(it.id, it.token, it.expiresAt)
+            return true
         }
 
-        Toast.makeText(context, "Login failed!", Toast.LENGTH_LONG).show()
+        showToast("Login failed!")
         return false
     }
 
@@ -60,45 +58,44 @@ class UserServiceImpl(
     ): Boolean {
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || firstname.isEmpty() || lastname.isEmpty()) {
-            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_LONG).show()
+            showToast("Please fill in all fields")
             return false
         }
 
         val response =
-            userApi.userRegister(
-                RegisterRequest(
-                    username,
-                    email,
-                    password,
-                    firstname,
-                    lastname
-                )
-            )
+            userApi.userRegister(RegisterRequest(username, email, password, firstname, lastname))
 
         if (response.isSuccessful) {
-            Toast.makeText(context, "Registration successful", Toast.LENGTH_LONG).show()
+            showToast("Registration successful")
             return true
-        } else {
-            Toast.makeText(context, "Registration failed", Toast.LENGTH_LONG).show()
-            return false
         }
+
+        showToast("Registration failed")
+        return false
     }
 
-    override suspend fun getUserProfile(userId: Int) {
-        TODO("Not yet implemented")
+    override suspend fun getUserProfile(userId: Int): User? {
+        val token = "Bearer ${sharedPrefManager.fetchToken()}"
+        val response = userApi.getUserProfile(userId, token)
+
+        response.body()?.let {
+            return it
+        }
+
+        showToast(response.errorBody()?.string())
+        return null
     }
 
-    override suspend fun getAllUsers() {
+    override suspend fun getAllUsers(): List<User> {
         val token = "Bearer ${sharedPrefManager.fetchToken()}"
         val response = userApi.getAllUsers(token)
 
-        if (response.isSuccessful && response.body() != null) {
-            // Handle successful response
-        } else {
-            // Handle error
-            val errorMessage = response.errorBody()?.string()
-            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+        response.body()?.let {
+            return it
         }
+
+        showToast(response.errorBody()?.string())
+        return emptyList()
     }
 
     override suspend fun resetPassword(
@@ -106,16 +103,15 @@ class UserServiceImpl(
         oldPassword: String,
         newPassword: String
     ): Boolean {
-        //val token = "Bearer ${sharedPrefManager.fetchToken()}"
         val response =
             userApi.resetPassword(ResetPasswordRequest(username, oldPassword, newPassword))
 
         if (response.isSuccessful) {
-            Toast.makeText(context, "Password reset successful", Toast.LENGTH_LONG).show()
+            showToast("Password reset successful")
             return true
         }
 
-        Toast.makeText(context, response.errorBody()?.string(), Toast.LENGTH_LONG).show()
+        showToast(response.errorBody()?.string())
         return false
     }
 
@@ -125,7 +121,19 @@ class UserServiceImpl(
         firstname: String?,
         lastname: String?
     ) {
-        TODO("Not yet implemented")
+        val userId = sharedPrefManager.fetchUserId() ?: return
+        val token = "Bearer ${sharedPrefManager.fetchToken()}"
+        val requestBody = UpdateProfileRequest(username, email, firstname, lastname)
+        val response = userApi.updateUserProfile(userId, token, requestBody)
+
+        if (response.isSuccessful) {
+            showToast("Profile updated successfully")
+        } else {
+            showToast(response.errorBody()?.string())
+        }
+    }
+
+    private fun showToast(message: String?) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 }
-

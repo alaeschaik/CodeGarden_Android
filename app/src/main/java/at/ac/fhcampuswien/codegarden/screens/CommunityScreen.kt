@@ -17,11 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.text.font.FontWeight
+import at.ac.fhcampuswien.codegarden.navigation.Screen
 import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 
@@ -29,7 +32,18 @@ import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 fun CommunityScreen(navController: NavController) {
     Scaffold(
         topBar = {
-            SimpleTopAppBar(title = "Community")
+            SimpleTopAppBar(
+                title = "Community",
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigate(Screen.ModuleScreen.route) }) {
+                        Icon(imageVector = Icons.Default.Home, contentDescription = "Home")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* Handle create action */ }) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "Create")
+                    }
+                })
         },
         bottomBar = {
             SimpleBottomAppBar(navController)

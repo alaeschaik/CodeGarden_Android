@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.codegarden.widgets
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,19 +19,27 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SimpleTopAppBar(title: String) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = title,
-                fontSize = 30.sp,
-                color = Color.Black
+fun SimpleTopAppBar(
+    title: String,
+    navigationIcon: (@Composable () -> Unit)? = null,
+    actions: @Composable RowScope.() -> Unit = {}
+) {
+    if (navigationIcon != null) {
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = title,
+                    fontSize = 30.sp,
+                    color = Color.Black
+                )
+            },
+            navigationIcon = navigationIcon,
+            actions = actions,
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
-    )
+    }
 }
 
 @Composable

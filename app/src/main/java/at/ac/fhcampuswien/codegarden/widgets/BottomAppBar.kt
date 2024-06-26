@@ -14,19 +14,19 @@ sealed class BottomBarScreen(
 ) {
     data object ModuleScreen: BottomBarScreen(
         route = Screen.ModuleScreen.route,
-        title = "Module",
+        title = Screen.ModuleScreen.title.toString(),
         icon = Icons.Filled.School
     )
 
     data object CommunityScreen: BottomBarScreen(
         route = Screen.CommunityScreen.route,
-        title = "Watchlist",
+        title = Screen.CommunityScreen.title.toString(),
         icon = Icons.Filled.RssFeed
     )
 
     data object LeaderBoard: BottomBarScreen(
         route = Screen.LeaderBoardScreen.route,
-        title = "LeaderBoard",
+        title = Screen.LeaderBoardScreen.title.toString(),
         icon = Icons.Filled.EmojiEvents
     )
 }

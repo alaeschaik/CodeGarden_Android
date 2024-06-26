@@ -48,15 +48,18 @@ fun SimpleBottomAppBar(navController: NavController) {
         containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
         screens.forEach { screen ->
-            NavigationBarItem(label = { Text(screen.title) },
+            NavigationBarItem(
+                label = { Text(screen.title) },
                 selected = currentDestination?.hierarchy?.any {
                     it.route == screen.route
-                } == true,
+                } ?: false,
                 onClick = { navController.navigate(screen.route) },
-                icon = { Icon(
+                icon = {
+                    Icon(
                     imageVector = screen.icon,
                     contentDescription = screen.title
-                )}
+                    )
+                }
             )
         }
     }

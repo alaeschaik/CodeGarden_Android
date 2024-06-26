@@ -14,79 +14,89 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
-import androidx.compose.material.icons.filled.School
-import androidx.compose.material.icons.filled.RssFeed
-import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import at.ac.fhcampuswien.codegarden.navigation.Screen
+import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
+import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 
 @Composable
-fun CommunityScreen(
-    navController: NavController
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(text = "Community", fontSize = 24.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        val postText = remember { mutableStateOf(TextFieldValue()) }
-
-        Row {
-            BasicTextField(
-                value = postText.value,
-                onValueChange = { postText.value = it },
-                modifier = Modifier
-                    .weight(1f)
-                    .background(Color.LightGray, shape = CircleShape)
-                    .padding(16.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = { /* Submit post action */ }) {
-                Text(text = "Post")
-            }
+fun CommunityScreen(navController: NavController) {
+    Scaffold(
+        topBar = {
+            SimpleTopAppBar(
+                title = "Community",
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigate(Screen.ModuleScreen.route) }) {
+                        Icon(imageVector = Icons.Default.Home, contentDescription = "Home")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* Handle create action */ }) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "Create")
+                    }
+                })
+        },
+        bottomBar = {
+            SimpleBottomAppBar(navController)
         }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            val postText = remember { mutableStateOf(TextFieldValue()) }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Row {
+                BasicTextField(
+                    value = postText.value,
+                    onValueChange = { postText.value = it },
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(Color.LightGray, shape = CircleShape)
+                        .padding(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = { /* Submit post action */ }) {
+                    Text(text = "Post")
+                }
+            }
 
-        PostCard(
-            navController = navController,
-            name = "Elise",
-            content = "Mobile App Development is cool!",
-            initLikes = 115,
-            initComments = 0,
-            initDislikes = 69,
-            onLikeClicked = { /* Handle like action */ },
-            onDislikeClicked = { /* Handle dislike action */ },
-            onCardClicked = { /* Handle card click action */ }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        PostCard(
-            navController = navController,
-            name = "Elise",
-            content = "Mobile App Development is cool!",
-            initLikes = 115,
-            initComments = 0,
-            initDislikes = 69,
-            onLikeClicked = { /* Handle like action */ },
-            onDislikeClicked = { /* Handle dislike action */ },
-            onCardClicked = { /* Handle card click action */ }
-        )
+            PostCard(
+                navController = navController,
+                name = "Elise",
+                content = "Mobile App Development is cool!",
+                initLikes = 115,
+                initComments = 0,
+                initDislikes = 69,
+                onLikeClicked = { /* Handle like action */ },
+                onDislikeClicked = { /* Handle dislike action */ },
+                onCardClicked = { /* Handle card click action */ }
+            )
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        BottomNavigationBar()
+            PostCard(
+                navController = navController,
+                name = "Elise",
+                content = "Mobile App Development is cool!",
+                initLikes = 115,
+                initComments = 0,
+                initDislikes = 69,
+                onLikeClicked = { /* Handle like action */ },
+                onDislikeClicked = { /* Handle dislike action */ },
+                onCardClicked = { /* Handle card click action */ }
+            )
+        }
     }
 }
 
@@ -155,30 +165,6 @@ fun PostCard(
                 }
                 Text(text = "$comments", modifier = Modifier.align(Alignment.CenterVertically))
             }
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar() {
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val iconSize = screenWidth / 5 // Adjust the divisor to control the size
-
-    BottomAppBar(
-        modifier = Modifier.fillMaxWidth(),
-        containerColor = Color.Transparent
-    ) {
-        IconButton(onClick = { /* Navigate to another screen */ }) {
-            Icon(imageVector = Icons.Filled.School, contentDescription = "Education", modifier = Modifier.size(iconSize))
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* Navigate to another screen */ }) {
-            Icon(imageVector = Icons.Filled.RssFeed, contentDescription = "RSS Feed", modifier = Modifier.size(iconSize))
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* Navigate to another screen */ }) {
-            Icon(imageVector = Icons.Filled.EmojiEvents, contentDescription = "Trophy", modifier = Modifier.size(iconSize))
         }
     }
 }

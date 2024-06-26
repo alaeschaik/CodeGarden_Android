@@ -1,8 +1,8 @@
-package at.ac.fhcampuswien.codegarden.ui.viewmodels
+package at.ac.fhcampuswien.codegarden.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import at.ac.fhcampuswien.codegarden.users.UserService
+import at.ac.fhcampuswien.codegarden.endpoints.users.UserService
 import kotlinx.coroutines.launch
 
 class RegisterViewModel(

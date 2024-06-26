@@ -1,9 +1,9 @@
 package at.ac.fhcampuswien.codegarden.di
 
 import android.content.Context
-import at.ac.fhcampuswien.codegarden.users.UserApi
-import at.ac.fhcampuswien.codegarden.users.UserService
-import at.ac.fhcampuswien.codegarden.users.UserServiceImpl
+import at.ac.fhcampuswien.codegarden.endpoints.users.UserApi
+import at.ac.fhcampuswien.codegarden.endpoints.users.UserService
+import at.ac.fhcampuswien.codegarden.endpoints.users.UserServiceImpl
 import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
 import at.ac.fhcampuswien.codegarden.utils.SharedPrefManagerImpl
 import okhttp3.OkHttpClient

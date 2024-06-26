@@ -1,6 +1,6 @@
 @file:Suppress("UNCHECKED_CAST")
 
-package at.ac.fhcampuswien.codegarden.ui.viewmodels
+package at.ac.fhcampuswien.codegarden.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

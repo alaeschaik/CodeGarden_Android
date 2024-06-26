@@ -28,14 +28,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
 import at.ac.fhcampuswien.codegarden.navigation.Screen
-import at.ac.fhcampuswien.codegarden.ui.viewmodels.ResetPasswordViewModel
-import at.ac.fhcampuswien.codegarden.ui.viewmodels.viewModelFactory
+import at.ac.fhcampuswien.codegarden.viewModels.ResetPasswordViewModel
+import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 
 @Composable
 fun PasswordResetScreen(
     navController: NavController
 ) {
-    var viewmodel = viewModel<ResetPasswordViewModel>(
+    val viewmodel = viewModel<ResetPasswordViewModel>(
         factory = viewModelFactory {
             ResetPasswordViewModel(appModule.userService)
         }

@@ -8,4 +8,5 @@ sealed class Screen(val route: String, val title: String? = null) {
     data object CommunityScreen : Screen("community", "Community")
     data object ModuleScreen : Screen("module", "Module")
     data object LeaderBoardScreen : Screen("leaderboard", "Leaderboard")
+    data object CreatePostScreen : Screen("createPost", "Create Post")
 }

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,6 +34,13 @@ import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 
 @Composable
 fun LeaderBoardScreen(navController: NavController) {
+    /*
+    val viewmodel = viewModel<LeaderboardViewModel>(
+        factory = viewModelFactory {
+            LeaderboardViewModel(appModule.userService)
+        }
+    )
+    */
     var selectedTab by remember { mutableIntStateOf(0) }
 
     val tabs = listOf("Leaderboard", "Achievements")
@@ -71,7 +77,7 @@ fun LeaderBoardScreen(navController: NavController) {
             }
 
             when (selectedTab) {
-                0 -> LeaderboardContent()
+                0 -> LeaderboardContent(/*viewModel = viewModel*/)
                 1 -> AchievementsContent()
             }
         }
@@ -79,9 +85,9 @@ fun LeaderBoardScreen(navController: NavController) {
 }
 
 @Composable
-fun LeaderboardContent(/*viewModel: LeaderboardViewModel = viewModel()*/) {
+fun LeaderboardContent(/*viewModel: LeaderboardViewModel*/) {
 
-    // val leaderboardItems by viewModel.leaderboardItems.collectAsState()
+//    val leaderboardItems by remember { mutableStateOf(viewModel.leaderboardItems) }
     val leaderboardItems = listOf(
         "1. Hubert - 99999XP",
         "2. Alex - 9324XP",
@@ -96,7 +102,7 @@ fun LeaderboardContent(/*viewModel: LeaderboardViewModel = viewModel()*/) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(leaderboardItems) { item ->
+        items(leaderboardItems) { /*index, user*/ user ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,7 +113,8 @@ fun LeaderboardContent(/*viewModel: LeaderboardViewModel = viewModel()*/) {
                 )
             ) {
                 Text(
-                    text = item,
+//                    text = "${index + 1}. ${user.firstname} ${user.lastname} - ${user.xpPoints}XP",
+                    text = user,
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -147,14 +154,6 @@ fun AchievementsContent() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = item)
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Completion Percentage",
-                            modifier = Modifier.padding(end = 4.dp)
-                        )
-                        Text(text = item.substringAfterLast(" - "))
-                    }
                 }
             }
         }

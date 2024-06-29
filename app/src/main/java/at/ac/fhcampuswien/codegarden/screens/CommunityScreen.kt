@@ -39,11 +39,12 @@ fun CommunityScreen(navController: NavController) {
                         Icon(imageVector = Icons.Default.Home, contentDescription = "Home")
                     }
                 },
-                actions = {
-                    IconButton(onClick = { /* Handle create action */ }) {
+                actions = { //temporary profile route
+                    IconButton(onClick = { navController.navigate(Screen.ProfileScreen.route) }) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = "Create")
                     }
-                })
+                },
+            )
         },
         bottomBar = {
             SimpleBottomAppBar(navController)

@@ -9,6 +9,7 @@ import at.ac.fhcampuswien.codegarden.screens.LeaderBoardScreen
 import at.ac.fhcampuswien.codegarden.screens.LoginScreen
 import at.ac.fhcampuswien.codegarden.screens.ModuleScreen
 import at.ac.fhcampuswien.codegarden.screens.PasswordResetScreen
+import at.ac.fhcampuswien.codegarden.screens.ProfileScreen
 import at.ac.fhcampuswien.codegarden.screens.RegistrationScreen
 
 @Composable
@@ -41,6 +42,10 @@ fun Navigation() {
 
         composable(route = Screen.ModuleScreen.route) {
             ModuleScreen(navController = navController)
+        }
+
+        composable(route = Screen.ProfileScreen.route) {
+            ProfileScreen(navController = navController)
         }
     }
 }

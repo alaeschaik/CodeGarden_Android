@@ -80,7 +80,8 @@ fun CommunityScreen(navController: NavController) {
                     IconButton(onClick = { navController.navigate(Screen.CreatePostScreen.route) }) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = "Create")
                     }
-                })
+                },
+            )
         },
         bottomBar = {
             SimpleBottomAppBar(navController)

@@ -24,12 +24,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -184,6 +186,8 @@ fun PostCard(
     username = viewModel.getUserNameForPost(post.id)
     var comments by remember { mutableStateOf(emptyList<Comment>()) }
     comments = viewModel.getCommentsForPost(post.id)
+    var isEditing by remember { mutableStateOf(false) }
+    var editableText by remember { mutableStateOf(post.content) }
 
     Card(
         modifier = Modifier
@@ -205,9 +209,29 @@ fun PostCard(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = username, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.weight(1f))
+                Button(
+                    onClick = {
+                        isEditing = !isEditing
+                        if (!isEditing) {
+                            post.content = editableText
+                            viewModel.updatePost(post)
+                        }
+                    },
+                ) {
+                    Text(if (isEditing) "Save" else "Edit")
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = post.content)
+            if (isEditing) {
+                TextField(
+                    value = editableText,
+                    onValueChange = { editableText = it },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(text = editableText)
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Row {
                 IconButton(onClick = {

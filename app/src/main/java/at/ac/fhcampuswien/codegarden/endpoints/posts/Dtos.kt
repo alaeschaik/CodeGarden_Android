@@ -43,7 +43,7 @@ data class Post(
     val id: Int,
     val userId: Int,
     val title: String,
-    val content: String,
+    var content: String,
     var upvotes: MutableIntState,
     var downvotes: MutableIntState,
     val createdAt: String

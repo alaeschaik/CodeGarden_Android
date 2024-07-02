@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.codegarden.screens
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -18,9 +19,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
@@ -42,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -120,9 +124,12 @@ fun CommunityScreen(navController: NavController) {
 
 @Composable
 fun PostComments(
+    postId: Int,
     comments: List<Comment>,
     showComments: Boolean,
-    viewModel: CommunityViewModel
+    viewModel: CommunityViewModel,
+    onCommentAdded: (Comment) -> Unit,
+    onCommentDeleted: (Comment) -> Unit
 ) {
     AnimatedVisibility(
         visible = showComments,
@@ -132,14 +139,46 @@ fun PostComments(
         Column {
             comments.forEach { comment ->
                 val username = viewModel.getUserNameForComment(comment.id)
-                CommentItem(comment, username)
+                CommentItem(comment, username, viewModel) { onCommentDeleted(it) }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            val commentText = remember { mutableStateOf(TextFieldValue()) }
+
+            Row(modifier = Modifier.padding(8.dp)) {
+                BasicTextField(
+                    value = commentText.value,
+                    onValueChange = { commentText.value = it },
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(Color.LightGray, shape = CircleShape)
+                        .padding(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = {
+                    viewModel.createComment(postId, commentText.value.text) {
+                        onCommentAdded(it.toComment())
+                        commentText.value = TextFieldValue()
+                        Toast.makeText(
+                            appModule.applicationContext,
+                            "Comment created!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }) {
+                    Text(text = "Post")
+                }
             }
         }
     }
 }
 
 @Composable
-fun CommentItem(comment: Comment, username: String) {
+fun CommentItem(
+    comment: Comment,
+    username: String,
+    viewModel: CommunityViewModel,
+    onCommentDeleted: (Comment) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,12 +200,30 @@ fun CommentItem(comment: Comment, username: String) {
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = username, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = {
+                        viewModel.deleteComment(comment.id) {
+                            onCommentDeleted(comment)
+                            Toast.makeText(
+                                appModule.applicationContext,
+                                "Comment deleted!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.DeleteForever,
+                        contentDescription = "Dislike"
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = comment.content, fontSize = 16.sp)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Posted at: ${convertTimestamp(comment.createdAt)}",
+                text = "Commented at: ${convertTimestamp(comment.createdAt)}",
                 fontSize = 14.sp,
                 color = Color.Gray
             )
@@ -209,6 +266,12 @@ fun PostCard(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = username, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Posted at: ${convertTimestamp(post.createdAt)}",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = {
@@ -232,7 +295,9 @@ fun PostCard(
             } else {
                 Text(text = editableText)
             }
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Row {
                 IconButton(onClick = {
                     onLikeClicked()
@@ -274,9 +339,16 @@ fun PostCard(
             }
         }
         PostComments(
+            postId = post.id,
             comments = comments,
             showComments = showComments,
-            viewModel = viewModel
+            viewModel = viewModel,
+            onCommentAdded = { newComment ->
+                comments += newComment
+            },
+            onCommentDeleted = { comment ->
+                comments = comments.filter { it.id != comment.id }
+            }
         )
     }
 }

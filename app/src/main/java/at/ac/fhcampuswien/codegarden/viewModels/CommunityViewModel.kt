@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.codegarden.viewModels
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -10,6 +11,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.ac.fhcampuswien.codegarden.endpoints.comments.CommentService
+import at.ac.fhcampuswien.codegarden.endpoints.comments.CreateCommentRequest
+import at.ac.fhcampuswien.codegarden.endpoints.comments.CreateCommentResponse
 import at.ac.fhcampuswien.codegarden.endpoints.posts.Comment
 import at.ac.fhcampuswien.codegarden.endpoints.posts.CreatePostRequest
 import at.ac.fhcampuswien.codegarden.endpoints.posts.Post
@@ -29,6 +32,9 @@ class CommunityViewModel(
 
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts = _posts.asStateFlow()
+
+    private val _comments = MutableStateFlow<List<Comment>>(emptyList())
+    val comments = _comments.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
 
@@ -50,6 +56,31 @@ class CommunityViewModel(
                 if (response != null) {
                     onPostSuccess(response.toPost())
                 }
+            }
+        }
+    }
+
+    fun createComment(
+        postId: Int,
+        content: String,
+        onCommentSuccess: (createCommentResponse: CreateCommentResponse) -> Unit
+    ) {
+        // Call the create comment method from the CommentService
+        // If the comment was successful, call onCommentSuccess
+        viewModelScope.launch {
+            val userId = sharedPrefManager.fetchUserId() ?: -1
+            val requestBody = CreateCommentRequest(userId, postId, content)
+            commentService.createComment(requestBody).collect { response ->
+                onCommentSuccess(response)
+            }
+        }
+    }
+
+    fun deleteComment(commentId: Int, onCommentDeleted: () -> Unit){
+        viewModelScope.launch {
+            commentService.deleteComment(commentId).collect {
+                Log.d("Comment", "Deleted comment with id $commentId")
+                onCommentDeleted()
             }
         }
     }

@@ -81,7 +81,6 @@ class ModuleServiceImpl(
             }
 
             Log.e("ModuleServiceImpl", response.errorBody().toString())
-            Toast.makeText(context, "Failed to update module", Toast.LENGTH_LONG).show()
             emit(false)
         }
     }

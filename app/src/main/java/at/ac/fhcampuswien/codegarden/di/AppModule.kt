@@ -5,6 +5,9 @@ import androidx.compose.runtime.MutableIntState
 import at.ac.fhcampuswien.codegarden.endpoints.comments.CommentApi
 import at.ac.fhcampuswien.codegarden.endpoints.comments.CommentService
 import at.ac.fhcampuswien.codegarden.endpoints.comments.CommentServiceImpl
+import at.ac.fhcampuswien.codegarden.endpoints.modules.ModuleApi
+import at.ac.fhcampuswien.codegarden.endpoints.modules.ModuleService
+import at.ac.fhcampuswien.codegarden.endpoints.modules.ModuleServiceImpl
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostApi
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostService
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostServiceImpl
@@ -26,9 +29,11 @@ interface AppModule {
     val userApi: UserApi
     val postApi: PostApi
     val commentApi: CommentApi
+    val moduleApi: ModuleApi
     val userService: UserService
     val postService: PostService
     val commentService: CommentService
+    val moduleService: ModuleService
     val sharedPrefManager: SharedPrefManager
     val applicationContext: Context
 }
@@ -92,6 +97,23 @@ class AppModuleImpl(private val appContext: Context) : AppModule {
             .create(CommentApi::class.java)
     }
 
+    override val moduleApi: ModuleApi by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://api.sheikhs.at/api/")
+            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
+            .client(
+                OkHttpClient.Builder()
+                    .connectTimeout(
+                        20,
+                        TimeUnit.SECONDS
+                    ) // Increase the connection timeout to 20 seconds
+                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
+                    .build()
+            )
+            .build()
+            .create(ModuleApi::class.java)
+    }
+
     override val sharedPrefManager: SharedPrefManager by lazy {
         SharedPrefManagerImpl(appContext)
     }
@@ -108,5 +130,9 @@ class AppModuleImpl(private val appContext: Context) : AppModule {
     }
     override val commentService: CommentService by lazy {
         CommentServiceImpl(appContext, commentApi, sharedPrefManager)
+    }
+
+    override val moduleService: ModuleService by lazy {
+        ModuleServiceImpl(appContext, moduleApi, sharedPrefManager)
     }
 }

@@ -14,7 +14,8 @@ data class CreateModuleResponse(
     val description: String,
     val introduction: String,
     val totalXpPoints: Int,
-    val content: String
+    val content: String,
+    val sections: List<Section>
 ) {
     fun toModule(): Module {
         return Module(
@@ -23,7 +24,8 @@ data class CreateModuleResponse(
             this.description,
             this.introduction,
             this.totalXpPoints,
-            this.content
+            this.content,
+            this.sections
         )
     }
 }
@@ -42,7 +44,8 @@ data class Module(
     val description: String,
     val introduction: String,
     val totalXpPoints: Int,
-    val content: String
+    val content: String,
+    val sections: List<Section>
 )
 
 data class Section(

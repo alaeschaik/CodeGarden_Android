@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import at.ac.fhcampuswien.codegarden.screens.CommunityScreen
+import at.ac.fhcampuswien.codegarden.screens.CreateModuleScreen
 import at.ac.fhcampuswien.codegarden.screens.CreatePostScreen
 import at.ac.fhcampuswien.codegarden.screens.LeaderBoardScreen
 import at.ac.fhcampuswien.codegarden.screens.LoginScreen
@@ -51,6 +52,10 @@ fun Navigation() {
 
         composable(route = Screen.CreatePostScreen.route) {
             CreatePostScreen(navController = navController)
+        }
+
+        composable(route = Screen.CreateModuleScreen.route) {
+            CreateModuleScreen(navController = navController)
         }
     }
 }

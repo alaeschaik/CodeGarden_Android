@@ -27,10 +27,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
 import androidx.compose.ui.Modifier
@@ -97,6 +103,9 @@ fun ModuleCard(
     module: Module,
     navController: NavController
 ) {
+    var isEditing by remember { mutableStateOf(false) }
+    var editableText by remember { mutableStateOf(module.description) }
+
     Card(
         modifier = Modifier
             .fillMaxSize(),
@@ -111,21 +120,31 @@ fun ModuleCard(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "0/${module.totalXpPoints}XP",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.secondary
-                )
+                Button(
+                    onClick = {
+                        isEditing = !isEditing
+                        if (!isEditing) {
+                            module.description = editableText
+                            viewModel.updateModule(module)
+                        }
+                    },
+                ) {
+                    Text(if (isEditing) "Save" else "Edit")
+                }
 //                IconButton(onClick = { viewModel.deleteModule(module.id) }) {
 //                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
 //                }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = module.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Spacer(modifier = Modifier.height(8.dp))
+            if (isEditing) {
+                TextField(
+                    value = editableText,
+                    onValueChange = { editableText = it },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(text = editableText)
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -136,8 +155,8 @@ fun ModuleCard(
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = "${(0.toDouble() / module.totalXpPoints * 100).toInt()}%",
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = "0/${module.totalXpPoints}XP",
+                    style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )
             }

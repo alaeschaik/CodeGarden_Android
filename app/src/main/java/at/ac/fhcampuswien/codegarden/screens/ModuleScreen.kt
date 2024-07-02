@@ -109,8 +109,8 @@ fun ModuleCard(
     Card(
         modifier = Modifier
             .fillMaxSize(),
-        elevation = CardDefaults.cardElevation(8.dp)
-        //onClick = { navController.navigate(Screen.ModuleDetailScreen.route + "/${module.id}") }
+        elevation = CardDefaults.cardElevation(8.dp),
+        onClick = { navController.navigate(Screen.ModuleDetailScreen.route) }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {

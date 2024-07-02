@@ -20,6 +20,9 @@ class ModuleViewModel(
     private val _modules = MutableStateFlow<List<Module>>(emptyList())
     val modules = _modules.asStateFlow()
 
+    private val _sections = MutableStateFlow<List<Section>>(emptyList())
+    val sections = _sections.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
 
     init {

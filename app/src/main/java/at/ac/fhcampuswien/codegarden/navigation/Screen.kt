@@ -11,4 +11,5 @@ sealed class Screen(val route: String, val title: String? = null) {
     data object ProfileScreen : Screen("profile")
     data object CreatePostScreen : Screen("createPost", "Create Post")
     data object CreateModuleScreen : Screen("createModule", "Create Module")
+    data object ModuleDetailScreen : Screen("moduleDetail", "Module Detail")
 }

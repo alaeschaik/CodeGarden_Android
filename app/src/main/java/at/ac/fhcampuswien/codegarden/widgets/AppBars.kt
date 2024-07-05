@@ -57,16 +57,21 @@ fun SimpleBottomAppBar(navController: NavController) {
         containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
         screens.forEach { screen ->
+            val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } ?: false
             NavigationBarItem(
-                label = { Text(screen.title) },
-                selected = currentDestination?.hierarchy?.any {
-                    it.route == screen.route
-                } ?: false,
+                label = {
+                    Text(
+                        screen.title,
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                selected = isSelected,
                 onClick = { navController.navigate(screen.route) },
                 icon = {
                     Icon(
-                    imageVector = screen.icon,
-                    contentDescription = screen.title
+                        imageVector = screen.icon,
+                        contentDescription = screen.title,
+                        tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 }
             )

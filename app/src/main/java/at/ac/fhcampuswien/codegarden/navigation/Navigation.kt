@@ -59,8 +59,9 @@ fun Navigation() {
             CreateModuleScreen(navController = navController)
         }
 
-        composable(route = Screen.ModuleDetailScreen.route) {
-            ModuleDetailScreen(navController = navController)
+        composable("${Screen.ModuleDetailScreen.route}/{moduleId}") { backStackEntry ->
+            val moduleId = backStackEntry.arguments?.getString("moduleId")?.toInt() ?: return@composable
+            ModuleDetailScreen(moduleId = moduleId, navController = navController)
         }
     }
 }

@@ -110,7 +110,7 @@ fun ModuleCard(
         modifier = Modifier
             .fillMaxSize(),
         elevation = CardDefaults.cardElevation(8.dp),
-        onClick = { navController.navigate(Screen.ModuleDetailScreen.route) }
+        onClick = { navController.navigate("${Screen.ModuleDetailScreen.route}/${module.id}") }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -147,12 +147,12 @@ fun ModuleCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    text = "Start",
+                    text = if ((0 / module.totalXpPoints.toFloat() * 100).toInt() == 0) "Start" else "Continue",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = "0/${module.totalXpPoints}XP",
+                    text = "0/${module.totalXpPoints}XP (${(0 / module.totalXpPoints.toFloat() * 100).toInt()}%)",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )

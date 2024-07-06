@@ -32,20 +32,18 @@ import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 
 @Composable
-fun ModuleDetailScreen(navController: NavController) {
+fun ModuleDetailScreen(moduleId: Int, navController: NavController) {
     val viewModel = viewModel<ModuleDetailViewModel>(
         factory = viewModelFactory {
             ModuleDetailViewModel(
                 appModule.moduleService,
                 appModule.sectionService,
-                appModule.sharedPrefManager
+                appModule.sharedPrefManager,
+                moduleId
             )
         }
     )
     val sections = viewModel.sections.collectAsState().value
-
-    // print sections
-    println(sections)
 
     Scaffold(
         topBar = {

@@ -27,7 +27,7 @@ interface UserApi {
         @Header("Authorization") token: String
     ): Response<User?>
 
-    @PUT("users/{id}]")
+    @PUT("users/{id}")
     suspend fun updateUserProfile(
         @Path("id") id: Int,
         @Header("Authorization") token: String,

@@ -16,16 +16,16 @@ class ProfileViewModel(
 ) : ViewModel() {
 
     private var _username = MutableStateFlow("")
-    var username = _username.asStateFlow()
+    val username = _username.asStateFlow()
 
     private var _email = MutableStateFlow("")
-    var email = _email.asStateFlow()
+    val email = _email.asStateFlow()
 
     private var _firstname = MutableStateFlow("")
-    var firstname = _firstname.asStateFlow()
+    val firstname = _firstname.asStateFlow()
 
     private var _lastname = MutableStateFlow("")
-    var lastname = _lastname.asStateFlow()
+    val lastname = _lastname.asStateFlow()
 
     private val _userProfile = MutableStateFlow<User?>(null)
     val userProfile: StateFlow<User?> = _userProfile
@@ -86,6 +86,30 @@ class ProfileViewModel(
         viewModelScope.launch {
             sharedPrefManager.clearUserDetails()
             onComplete()
+        }
+    }
+
+    fun updateUsername(newUsername: String) {
+        viewModelScope.launch {
+            _username.value = newUsername
+        }
+    }
+
+    fun updateEmail(newEmail: String) {
+        viewModelScope.launch {
+            _email.value = newEmail
+        }
+    }
+
+    fun updateFirstname(newFirstname: String) {
+        viewModelScope.launch {
+            _firstname.value = newFirstname
+        }
+    }
+
+    fun updateLastname(newLastname: String) {
+        viewModelScope.launch {
+            _lastname.value = newLastname
         }
     }
 }

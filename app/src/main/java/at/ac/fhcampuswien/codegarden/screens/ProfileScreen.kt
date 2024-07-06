@@ -10,24 +10,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -39,7 +30,6 @@ import at.ac.fhcampuswien.codegarden.viewModels.ProfileViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
-import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -49,11 +39,10 @@ fun ProfileScreen(navController: NavController) {
         }
     )
 
-    // Collecting states from ViewModel
-//    var username = viewModel.username.collectAsState()
-//    var email = viewModel.email.collectAsState().value
-//    var firstname = viewModel.firstname.collectAsState().value
-//    var lastname = viewModel.lastname.collectAsState().value
+    val username by viewModel.username.collectAsState()
+    val email by viewModel.email.collectAsState()
+    val firstname by viewModel.firstname.collectAsState()
+    val lastname by viewModel.lastname.collectAsState()
 
 
     Scaffold(
@@ -92,8 +81,10 @@ fun ProfileScreen(navController: NavController) {
         ) {
             // Username field
             OutlinedTextField(
-                value = username.value,
-                onValueChange = { username.value = it },
+                value = username,
+                onValueChange = {
+                    viewModel.updateUsername(it)
+                },
                 label = { Text("Username") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -103,7 +94,7 @@ fun ProfileScreen(navController: NavController) {
             // Email field
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { viewModel.updateEmail(it) },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -113,7 +104,7 @@ fun ProfileScreen(navController: NavController) {
             // Firstname field
             OutlinedTextField(
                 value = firstname,
-                onValueChange = { firstname = it },
+                onValueChange = { viewModel.updateFirstname(it) },
                 label = { Text("Firstname") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -123,7 +114,7 @@ fun ProfileScreen(navController: NavController) {
             // Lastname field
             OutlinedTextField(
                 value = lastname,
-                onValueChange = { lastname = it },
+                onValueChange = { viewModel.updateLastname(it) },
                 label = { Text("Lastname") },
                 modifier = Modifier.fillMaxWidth()
             )

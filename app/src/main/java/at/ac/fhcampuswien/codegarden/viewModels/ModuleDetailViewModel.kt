@@ -1,0 +1,40 @@
+package at.ac.fhcampuswien.codegarden.viewModels
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import at.ac.fhcampuswien.codegarden.endpoints.modules.Module
+import at.ac.fhcampuswien.codegarden.endpoints.modules.ModuleService
+import at.ac.fhcampuswien.codegarden.endpoints.sections.CreateSectionRequest
+import at.ac.fhcampuswien.codegarden.endpoints.modules.Section
+import at.ac.fhcampuswien.codegarden.endpoints.sections.SectionService
+import at.ac.fhcampuswien.codegarden.endpoints.sections.UpdateSectionRequest
+import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class ModuleDetailViewModel(
+    private val moduleService: ModuleService,
+    private val sectionService: SectionService,
+    private val sharedPrefManager: SharedPrefManager
+) : ViewModel() {
+
+    private val _sections = MutableStateFlow<List<Section>>(emptyList())
+    val sections = _sections.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+
+    init {
+        getModuleSections(1) { sections ->
+            _sections.value = sections
+        }
+    }
+
+    fun getModuleSections(id: Int, onSectionsFetched: (sections: List<at.ac.fhcampuswien.codegarden.endpoints.modules.Section>) -> Unit) {
+        viewModelScope.launch {
+            moduleService.getModuleSections(id).collect { sections ->
+                onSectionsFetched(sections)
+            }
+        }
+    }
+}

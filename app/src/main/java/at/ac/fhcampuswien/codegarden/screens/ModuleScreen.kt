@@ -104,7 +104,7 @@ fun ModuleCard(
     navController: NavController
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    var editableText by remember { mutableStateOf(module.description) }
+    var editableText by remember { mutableStateOf(module.introduction) }
 
     Card(
         modifier = Modifier
@@ -124,16 +124,13 @@ fun ModuleCard(
                     onClick = {
                         isEditing = !isEditing
                         if (!isEditing) {
-                            module.description = editableText
+                            module.introduction = editableText
                             viewModel.updateModule(module)
                         }
                     },
                 ) {
                     Text(if (isEditing) "Save" else "Edit")
                 }
-//                IconButton(onClick = { viewModel.deleteModule(module.id) }) {
-//                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
-//                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             if (isEditing) {

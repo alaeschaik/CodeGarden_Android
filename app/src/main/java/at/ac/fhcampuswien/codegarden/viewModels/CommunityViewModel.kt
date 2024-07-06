@@ -85,6 +85,10 @@ class CommunityViewModel(
         }
     }
 
+    private fun sortPosts() {
+        _posts.value = _posts.value.sortedByDescending { it.upvotes.intValue - it.downvotes.intValue }
+    }
+
     private fun getAllPosts() {
         // Call the get all posts method from the PostService
         // If the posts were fetched successfully, call onPostsFetched
@@ -93,6 +97,7 @@ class CommunityViewModel(
             postService.getAllPosts().collect { posts ->
                 posts.let {
                     _posts.value = posts
+                    sortPosts()
                 }
             }
             _isLoading.value = false
@@ -155,6 +160,7 @@ class CommunityViewModel(
             ).collect { success ->
                 if (success) {
                     _posts.value = _posts.value.map { if (it.id == post.id) post else it }.toList()
+                    sortPosts()
                 }
             }
         }

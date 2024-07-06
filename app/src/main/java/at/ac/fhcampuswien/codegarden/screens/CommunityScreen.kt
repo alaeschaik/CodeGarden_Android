@@ -74,9 +74,6 @@ fun CommunityScreen(navController: NavController) {
     )
     val posts = viewModel.posts.collectAsState().value
 
-    // Sort posts by number of upvotes in descending order
-    val sortedPosts = posts.sortedByDescending { it.upvotes.intValue }
-
     Scaffold(
         topBar = {
             SimpleTopAppBar(
@@ -107,7 +104,7 @@ fun CommunityScreen(navController: NavController) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                items(sortedPosts) { post ->
+                items(posts) { post ->
                     PostCard(
                         viewModel = viewModel,
                         post = post,

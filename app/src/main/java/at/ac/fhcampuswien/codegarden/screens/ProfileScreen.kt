@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -191,8 +190,8 @@ fun AchievementContent(viewModel: ProfileViewModel) {
                     .fillMaxWidth()
                     .padding(4.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.LightGray,
-                    contentColor = Color.Black
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             ) {
                 Column(

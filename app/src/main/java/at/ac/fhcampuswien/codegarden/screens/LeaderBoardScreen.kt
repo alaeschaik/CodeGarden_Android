@@ -19,6 +19,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -27,20 +28,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
 import at.ac.fhcampuswien.codegarden.navigation.Screen
+import at.ac.fhcampuswien.codegarden.viewModels.LeaderboardViewModel
+import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 
 @Composable
 fun LeaderBoardScreen(navController: NavController) {
-    /*
-    val viewmodel = viewModel<LeaderboardViewModel>(
+    val viewModel: LeaderboardViewModel = viewModel(
         factory = viewModelFactory {
             LeaderboardViewModel(appModule.userService)
         }
     )
-    */
     var selectedTab by remember { mutableIntStateOf(0) }
 
     val tabs = listOf("Leaderboard", "Achievements")
@@ -77,7 +80,7 @@ fun LeaderBoardScreen(navController: NavController) {
             }
 
             when (selectedTab) {
-                0 -> LeaderboardContent(/*viewModel = viewModel*/)
+                0 -> LeaderboardContent(viewModel)
                 1 -> AchievementsContent()
             }
         }
@@ -85,24 +88,16 @@ fun LeaderBoardScreen(navController: NavController) {
 }
 
 @Composable
-fun LeaderboardContent(/*viewModel: LeaderboardViewModel*/) {
-
-//    val leaderboardItems by remember { mutableStateOf(viewModel.leaderboardItems) }
-    val leaderboardItems = listOf(
-        "1. Hubert - 99999XP",
-        "2. Alex - 9324XP",
-        "3. Elise - 5543XP",
-        "4. Max - 123XP",
-        "5. Lisa - 32XP"
-    )
+fun LeaderboardContent(viewModel: LeaderboardViewModel) {
+    val leaderboardItems by viewModel.leaderboardItems.collectAsState()
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(leaderboardItems) { /*index, user*/ user ->
+        items(leaderboardItems) { rankedUser ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,11 +107,21 @@ fun LeaderboardContent(/*viewModel: LeaderboardViewModel*/) {
                     contentColor = Color.Black
                 )
             ) {
-                Text(
-//                    text = "${index + 1}. ${user.firstname} ${user.lastname} - ${user.xpPoints}XP",
-                    text = user,
-                    modifier = Modifier.padding(16.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "${rankedUser.rank}. ${rankedUser.user.firstname}",
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = "${rankedUser.user.xpPoints} XP",
+                        modifier = Modifier.alignByBaseline()
+                    )
+                }
             }
         }
     }

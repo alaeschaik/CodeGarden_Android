@@ -38,7 +38,7 @@ fun LoginScreen(navController: NavController) {
     )
 
     if (viewModel.isUserLoggedIn()) {
-        navController.navigate(Screen.CommunityScreen.route)
+        navController.navigate(Screen.ModuleScreen.route)
     }
 
     var username by remember { mutableStateOf("") }

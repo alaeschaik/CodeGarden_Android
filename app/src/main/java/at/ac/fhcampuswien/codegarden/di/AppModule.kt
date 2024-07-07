@@ -11,6 +11,9 @@ import at.ac.fhcampuswien.codegarden.endpoints.modules.ModuleServiceImpl
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostApi
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostService
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostServiceImpl
+import at.ac.fhcampuswien.codegarden.endpoints.sections.SectionApi
+import at.ac.fhcampuswien.codegarden.endpoints.sections.SectionService
+import at.ac.fhcampuswien.codegarden.endpoints.sections.SectionServiceImpl
 import at.ac.fhcampuswien.codegarden.endpoints.users.UserApi
 import at.ac.fhcampuswien.codegarden.endpoints.users.UserService
 import at.ac.fhcampuswien.codegarden.endpoints.users.UserServiceImpl
@@ -30,10 +33,12 @@ interface AppModule {
     val postApi: PostApi
     val commentApi: CommentApi
     val moduleApi: ModuleApi
+    val sectionApi: SectionApi
     val userService: UserService
     val postService: PostService
     val commentService: CommentService
     val moduleService: ModuleService
+    val sectionService: SectionService
     val sharedPrefManager: SharedPrefManager
     val applicationContext: Context
 }
@@ -114,6 +119,23 @@ class AppModuleImpl(private val appContext: Context) : AppModule {
             .create(ModuleApi::class.java)
     }
 
+    override val sectionApi: SectionApi by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://api.sheikhs.at/api/")
+            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
+            .client(
+                OkHttpClient.Builder()
+                    .connectTimeout(
+                        20,
+                        TimeUnit.SECONDS
+                    ) // Increase the connection timeout to 20 seconds
+                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
+                    .build()
+            )
+            .build()
+            .create(SectionApi::class.java)
+    }
+
     override val sharedPrefManager: SharedPrefManager by lazy {
         SharedPrefManagerImpl(appContext)
     }
@@ -134,5 +156,9 @@ class AppModuleImpl(private val appContext: Context) : AppModule {
 
     override val moduleService: ModuleService by lazy {
         ModuleServiceImpl(appContext, moduleApi, sharedPrefManager)
+    }
+
+    override val sectionService: SectionService by lazy {
+        SectionServiceImpl(appContext, sectionApi, sharedPrefManager)
     }
 }

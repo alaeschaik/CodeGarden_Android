@@ -102,13 +102,13 @@ fun ModuleCard(
     navController: NavController
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    var editableText by remember { mutableStateOf(module.description) }
+    var editableText by remember { mutableStateOf(module.introduction) }
 
     Card(
         modifier = Modifier
             .fillMaxSize(),
-        elevation = CardDefaults.cardElevation(8.dp)
-        //onClick = { navController.navigate(Screen.ModuleDetailScreen.route + "/${module.id}") }
+        elevation = CardDefaults.cardElevation(8.dp),
+        onClick = { navController.navigate("${Screen.ModuleDetailScreen.route}/${module.id}") }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -122,16 +122,13 @@ fun ModuleCard(
                     onClick = {
                         isEditing = !isEditing
                         if (!isEditing) {
-                            module.description = editableText
+                            module.introduction = editableText
                             viewModel.updateModule(module)
                         }
                     },
                 ) {
                     Text(if (isEditing) "Save" else "Edit")
                 }
-//                IconButton(onClick = { viewModel.deleteModule(module.id) }) {
-//                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
-//                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             if (isEditing) {
@@ -148,12 +145,12 @@ fun ModuleCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    text = "Start",
+                    text = if ((0 / module.totalXpPoints.toFloat() * 100).toInt() == 0) "Start" else "Continue",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = "0/${module.totalXpPoints}XP",
+                    text = "0/${module.totalXpPoints}XP (${(0 / module.totalXpPoints.toFloat() * 100).toInt()}%)",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )

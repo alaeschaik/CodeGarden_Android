@@ -13,6 +13,8 @@ interface SharedPrefManager {
     fun saveCredentials(username: String, password: String)
     fun fetchUsername(): String?
     fun fetchTokenExpiration(): Date?
+    fun clearUserDetails()
+    fun saveProfileDetails(username: String, email: String, firstname: String, lastname: String)
 }
 
 class SharedPrefManagerImpl(private val context: Context) : SharedPrefManager {
@@ -54,5 +56,22 @@ class SharedPrefManagerImpl(private val context: Context) : SharedPrefManager {
         return dateString?.let { format.parse(it) }
     }
 
+    override fun saveProfileDetails(username: String, email: String, firstname: String, lastname: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("username", username)
+        editor.putString("email", email)
+        editor.putString("firstname", firstname)
+        editor.putString("lastname", lastname)
+        editor.apply()
+    }
 
+    override fun clearUserDetails() {
+        val editor = sharedPreferences.edit()
+        editor.remove("token")
+        editor.remove("id")
+        editor.remove("expiresAt")
+        editor.remove("username")
+        editor.remove("password")
+        editor.apply()
+    }
 }

@@ -3,6 +3,8 @@ package at.ac.fhcampuswien.codegarden.endpoints.users
 import android.content.Context
 import android.widget.Toast
 import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 interface UserService {
     suspend fun userLogin(username: String, password: String): Boolean
@@ -22,7 +24,7 @@ interface UserService {
         email: String?,
         firstname: String?,
         lastname: String?
-    )
+    ): Flow<Boolean>
 }
 
 class UserServiceImpl(
@@ -120,16 +122,24 @@ class UserServiceImpl(
         email: String?,
         firstname: String?,
         lastname: String?
-    ) {
-        val userId = sharedPrefManager.fetchUserId() ?: return
-        val token = "Bearer ${sharedPrefManager.fetchToken()}"
-        val requestBody = UpdateProfileRequest(username, email, firstname, lastname)
-        val response = userApi.updateUserProfile(userId, token, requestBody)
+    ): Flow<Boolean> = flow {
+        try {
+            val userId = sharedPrefManager.fetchUserId() ?: throw IllegalStateException("User ID not found")
+            val token = "Bearer ${sharedPrefManager.fetchToken()}"
+            val requestBody = UpdateProfileRequest(username, email, firstname, lastname)
+            val response = userApi.updateUserProfile(userId, token, requestBody)
 
-        if (response.isSuccessful) {
-            showToast("Profile updated successfully")
-        } else {
-            showToast(response.errorBody()?.string())
+            if (response.isSuccessful) {
+                showToast("Profile updated successfully")
+                emit(true)
+                return@flow
+            } else {
+                showToast(response.errorBody()?.string())
+                emit(false)
+            }
+        } catch (e: Exception) {
+            showToast(e.message)
+            emit(false)
         }
     }
 

@@ -3,8 +3,10 @@ package at.ac.fhcampuswien.codegarden.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +16,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -32,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
 import at.ac.fhcampuswien.codegarden.navigation.Screen
+import at.ac.fhcampuswien.codegarden.viewModels.Badge
 import at.ac.fhcampuswien.codegarden.viewModels.LeaderboardViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
@@ -41,7 +46,10 @@ import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 fun LeaderBoardScreen(navController: NavController) {
     val viewModel: LeaderboardViewModel = viewModel(
         factory = viewModelFactory {
-            LeaderboardViewModel(appModule.userService)
+            LeaderboardViewModel(
+                appModule.userService,
+                appModule.sharedPrefManager
+            )
         }
     )
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -81,7 +89,7 @@ fun LeaderBoardScreen(navController: NavController) {
 
             when (selectedTab) {
                 0 -> LeaderboardContent(viewModel)
-                1 -> AchievementsContent()
+                1 -> AchievementsContent(viewModel)
             }
         }
     }
@@ -118,7 +126,7 @@ fun LeaderboardContent(viewModel: LeaderboardViewModel) {
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = "${rankedUser.user.xpPoints} XP",
+                        text = "${rankedUser.user.xpPoints.toInt()} XP",
                         modifier = Modifier.alignByBaseline()
                     )
                 }
@@ -128,12 +136,12 @@ fun LeaderboardContent(viewModel: LeaderboardViewModel) {
 }
 
 @Composable
-fun AchievementsContent() {
-    val achievementsItems = listOf(
-        "Novice - Finish 1 Quiz",
-        "Beginner - Finish 5 Quizzes",
-        "Intermediate - Finish 25 Quizzes"
-    )
+fun AchievementsContent(viewModel: LeaderboardViewModel) {
+    val currentUser by viewModel.currentUser.collectAsState()
+    val allBadges = viewModel.getAllBadges()
+    val currentUserXp = currentUser?.xpPoints ?: 0f
+    var badgeXP = 0f
+    val xP = 384
 
     LazyColumn(
         modifier = Modifier
@@ -141,7 +149,10 @@ fun AchievementsContent() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(achievementsItems) { item ->
+        items(allBadges) { badge ->
+            badgeXP = if (xP >= badge.maxXP) badge.maxXP else xP.toFloat()
+            val progress = (badgeXP / badge.maxXP) * 100
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,16 +162,50 @@ fun AchievementsContent() {
                     contentColor = Color.Black
                 )
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(16.dp)
                 ) {
-                    Text(text = item)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = badge.name,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "${progress.toInt()}%",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    BadgeProgressBar(xpPoints = currentUserXp, badge = badge, badgeXP = badgeXP)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun BadgeProgressBar(xpPoints: Float, badge: Badge, badgeXP: Float) {
+    val progress = (badgeXP / badge.maxXP).coerceIn(0f, 1f)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Text(
+            text = "XP: ${badgeXP.toInt()}/${badge.maxXP.toInt()}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .padding(top = 4.dp),
+            color = MaterialTheme.colorScheme.primary,
+        )
     }
 }

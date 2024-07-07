@@ -20,7 +20,8 @@ class ModuleViewModel(
     private val _modules = MutableStateFlow<List<Module>>(emptyList())
     val modules = _modules.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _sections = MutableStateFlow<List<Section>>(emptyList())
+    val sections = _sections.asStateFlow()
 
     init {
         getAllModules()
@@ -46,13 +47,11 @@ class ModuleViewModel(
 
     private fun getAllModules() {
         viewModelScope.launch {
-            _isLoading.value = true
             moduleService.getAllModules().collect { modules ->
                 modules.let {
                     _modules.value = modules
                 }
             }
-            _isLoading.value = false
         }
     }
 

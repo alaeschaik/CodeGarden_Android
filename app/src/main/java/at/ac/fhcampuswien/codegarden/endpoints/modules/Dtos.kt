@@ -41,8 +41,8 @@ data class UpdateModuleRequest(
 data class Module(
     val id: Int,
     val title: String,
-    var description: String,
-    val introduction: String,
+    val description: String,
+    var introduction: String,
     val totalXpPoints: Int,
     val content: String,
     val sections: List<Section>

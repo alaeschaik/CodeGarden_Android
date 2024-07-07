@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.codegarden.endpoints.challenges
 
+import at.ac.fhcampuswien.codegarden.endpoints.questions.Question
 import at.ac.fhcampuswien.codegarden.endpoints.sections.Section
 import retrofit2.Response
 import retrofit2.http.Body
@@ -46,9 +47,9 @@ interface ChallengeApi {
         @Header("Authorization") token: String,
     ): Response<Section>
 
-//    @GET("challenges/{id}/questions")
-//    suspend fun getChallengeQuestions(
-//        @Path("id") id: Int,
-//        @Header("Authorization") token: String,
-//    ): Response<List<Question>>
+    @GET("challenges/{id}/questions")
+    suspend fun getChallengeQuestions(
+        @Path("id") id: Int,
+        @Header("Authorization") token: String,
+    ): Response<List<Question>>
 }

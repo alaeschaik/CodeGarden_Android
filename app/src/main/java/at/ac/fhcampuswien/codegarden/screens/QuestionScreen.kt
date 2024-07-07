@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.codegarden.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +11,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -20,31 +18,28 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
-import at.ac.fhcampuswien.codegarden.endpoints.challenges.Challenge
-import at.ac.fhcampuswien.codegarden.navigation.Screen
-import at.ac.fhcampuswien.codegarden.viewModels.ChallengeViewModel
+import at.ac.fhcampuswien.codegarden.endpoints.questions.Question
+import at.ac.fhcampuswien.codegarden.viewModels.QuestionViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
-import androidx.compose.ui.viewinterop.AndroidView
-import android.webkit.WebView
 
 @Composable
-fun ChallengeScreen(sectionId: Int, navController: NavController) {
-    val viewModel = viewModel<ChallengeViewModel>(
+fun QuestionScreen(challengeId: Int, navController: NavController) {
+    val viewModel = viewModel<QuestionViewModel>(
         factory = viewModelFactory {
-            ChallengeViewModel(
-                appModule.sectionService,
+            QuestionViewModel(
+                appModule.challengeService,
                 appModule.sharedPrefManager,
-                sectionId
+                challengeId
             )
         }
     )
-    val challenges = viewModel.challenges.collectAsState().value
+    val questions = viewModel.questions.collectAsState().value
 
     Scaffold(
         topBar = {
             SimpleTopAppBar(
-                title = "Challenges",
+                title = "Questions",
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -54,10 +49,10 @@ fun ChallengeScreen(sectionId: Int, navController: NavController) {
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             LazyColumn {
-                items(challenges) { challenge ->
-                    ChallengeCard(
+                items(questions) { question ->
+                    QuestionCard(
                         viewModel = viewModel,
-                        challenge = challenge,
+                        question = question,
                         navController = navController
                     )
                 }
@@ -67,33 +62,17 @@ fun ChallengeScreen(sectionId: Int, navController: NavController) {
 }
 
 @Composable
-fun ChallengeCard(
-    viewModel: ChallengeViewModel,
-    challenge: Challenge,
+fun QuestionCard(
+    viewModel: QuestionViewModel,
+    question: Question,
     navController: NavController
 ) {
     Card(
         modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
-        onClick = { navController.navigate("${Screen.QuestionScreen.route}/${challenge.id}") }
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column {
-            HtmlContentViewer(htmlContent = challenge.content, modifier = Modifier.padding(8.dp))
+            HtmlContentViewer(htmlContent = question.content, modifier = Modifier.padding(8.dp))
         }
     }
-}
-
-@SuppressLint("SetJavaScriptEnabled")
-@Composable
-fun HtmlContentViewer(htmlContent: String, modifier: Modifier = Modifier) {
-    AndroidView(
-        factory = { context ->
-            WebView(context).apply {
-                settings.javaScriptEnabled = true
-                // Ensure any relative URL or content is correctly interpreted
-                loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
-            }
-        },
-        modifier = modifier
-    )
 }

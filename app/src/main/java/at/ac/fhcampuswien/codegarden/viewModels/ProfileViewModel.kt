@@ -6,8 +6,11 @@ import at.ac.fhcampuswien.codegarden.endpoints.users.User
 import at.ac.fhcampuswien.codegarden.endpoints.users.UserService
 import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+data class Badge(val name: String, val minXP: Float, val maxXP: Float)
 
 class ProfileViewModel(
     private val userService: UserService,
@@ -15,18 +18,25 @@ class ProfileViewModel(
 ) : ViewModel() {
 
     private var _username = MutableStateFlow("")
-    val username = _username.asStateFlow()
-
     private var _email = MutableStateFlow("")
-    val email = _email.asStateFlow()
-
     private var _firstname = MutableStateFlow("")
-    val firstname = _firstname.asStateFlow()
-
     private var _lastname = MutableStateFlow("")
-    val lastname = _lastname.asStateFlow()
 
     private val _userProfile = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> get() = _userProfile
+
+    val username = _username.asStateFlow()
+    val email = _email.asStateFlow()
+    val firstname = _firstname.asStateFlow()
+    val lastname = _lastname.asStateFlow()
+
+    private val badges = listOf(
+        Badge("Noob", 0f, 100f),
+        Badge("Beginner", 100f, 500f),
+        Badge("Intermediate", 500f, 1000f),
+        Badge("Advanced", 1000f, 2500f),
+        Badge("Expert", 2500f, 10000f)
+    )
 
     init {
         viewModelScope.launch {
@@ -96,5 +106,9 @@ class ProfileViewModel(
         viewModelScope.launch {
             _lastname.value = newLastname
         }
+    }
+
+    fun getAllBadges(): List<Badge> {
+        return badges
     }
 }

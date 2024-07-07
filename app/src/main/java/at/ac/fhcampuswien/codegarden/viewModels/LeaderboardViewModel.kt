@@ -8,15 +8,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+data class RankedUser(val rank: Int, val user: User)
+
 class LeaderboardViewModel(
-    private val userService: UserService,
+    private val userService: UserService
 ) : ViewModel() {
 
     private val _leaderboardItems = MutableStateFlow<List<RankedUser>>(emptyList())
     val leaderboardItems: StateFlow<List<RankedUser>> get() = _leaderboardItems
 
     init {
-        fetchLeaderboardItems()
+        viewModelScope.launch {
+            fetchLeaderboardItems()
+        }
     }
 
     private fun fetchLeaderboardItems() {
@@ -40,5 +44,3 @@ class LeaderboardViewModel(
         return rankedUsers
     }
 }
-
-data class RankedUser(val rank: Int, val user: User)

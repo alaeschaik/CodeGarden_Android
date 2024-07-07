@@ -14,6 +14,7 @@ import at.ac.fhcampuswien.codegarden.screens.ModuleDetailScreen
 import at.ac.fhcampuswien.codegarden.screens.ModuleScreen
 import at.ac.fhcampuswien.codegarden.screens.PasswordResetScreen
 import at.ac.fhcampuswien.codegarden.screens.ProfileScreen
+import at.ac.fhcampuswien.codegarden.screens.QuestionScreen
 import at.ac.fhcampuswien.codegarden.screens.RegistrationScreen
 
 @Composable
@@ -68,6 +69,11 @@ fun Navigation() {
         composable("${Screen.ChallengeScreen.route}/{sectionId}") { backStackEntry ->
             val sectionId = backStackEntry.arguments?.getString("sectionId")?.toInt() ?: return@composable
             ChallengeScreen(sectionId = sectionId, navController = navController)
+        }
+
+        composable("${Screen.QuestionScreen.route}/{challengeId}") { backStackEntry ->
+            val challengeId = backStackEntry.arguments?.getString("challengeId")?.toInt() ?: return@composable
+            QuestionScreen(challengeId = challengeId, navController = navController)
         }
     }
 }

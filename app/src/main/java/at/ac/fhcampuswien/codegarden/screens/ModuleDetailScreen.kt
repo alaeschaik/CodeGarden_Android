@@ -82,9 +82,8 @@ fun ModuleDetailCard(
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(8.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        onClick = { navController.navigate("${Screen.ChallengeScreen.route}/${section.id}") }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(

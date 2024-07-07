@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.codegarden.endpoints.sections
 
+import at.ac.fhcampuswien.codegarden.endpoints.challenges.Challenge
 import at.ac.fhcampuswien.codegarden.endpoints.modules.Module
 import retrofit2.Response
 import retrofit2.http.Body
@@ -33,11 +34,11 @@ interface SectionApi {
         @Header("Authorization") token: String,
     ): Response<Module>
 
-//    @GET("sections/{id}/challenges")
-//    suspend fun getSectionChallenges(
-//        @Path("id") id: Int,
-//        @Header("Authorization") token: String,
-//    ): Response<List<Challenge>>
+    @GET("sections/{id}/challenges")
+    suspend fun getSectionChallenges(
+        @Path("id") id: Int,
+        @Header("Authorization") token: String,
+    ): Response<List<Challenge>>
 
     @PUT("sections/{id}")
     suspend fun updateSection(

@@ -26,7 +26,7 @@ class ModuleDetailViewModel(
         }
     }
 
-    fun getModuleSections(id: Int, onSectionsFetched: (sections: List<Section>) -> Unit) {
+    private fun getModuleSections(id: Int, onSectionsFetched: (sections: List<Section>) -> Unit) {
         viewModelScope.launch {
             moduleService.getModuleSections(id).collect { sections ->
                 onSectionsFetched(sections)

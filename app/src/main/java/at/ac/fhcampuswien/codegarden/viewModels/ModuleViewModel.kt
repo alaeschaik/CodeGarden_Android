@@ -47,13 +47,11 @@ class ModuleViewModel(
 
     private fun getAllModules() {
         viewModelScope.launch {
-            _isLoading.value = true
             moduleService.getAllModules().collect { modules ->
                 modules.let {
                     _modules.value = modules
                 }
             }
-            _isLoading.value = false
         }
     }
 

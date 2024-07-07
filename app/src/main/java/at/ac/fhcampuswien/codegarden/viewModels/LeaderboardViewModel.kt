@@ -4,14 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.ac.fhcampuswien.codegarden.endpoints.users.User
 import at.ac.fhcampuswien.codegarden.endpoints.users.UserService
-import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LeaderboardViewModel(
     private val userService: UserService,
-    private val sharedPrefManager: SharedPrefManager
 ) : ViewModel() {
 
     private val _leaderboardItems = MutableStateFlow<List<RankedUser>>(emptyList())

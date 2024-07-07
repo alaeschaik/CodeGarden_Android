@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
@@ -42,10 +41,7 @@ import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 fun LeaderBoardScreen(navController: NavController) {
     val viewModel: LeaderboardViewModel = viewModel(
         factory = viewModelFactory {
-            LeaderboardViewModel(
-                appModule.userService,
-                appModule.sharedPrefManager
-            )
+            LeaderboardViewModel(appModule.userService)
         }
     )
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -98,8 +94,8 @@ fun LeaderboardContent(viewModel: LeaderboardViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(leaderboardItems) { rankedUser ->
             Card(

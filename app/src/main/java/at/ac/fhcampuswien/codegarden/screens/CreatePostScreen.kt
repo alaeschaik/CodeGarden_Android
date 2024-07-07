@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
+import at.ac.fhcampuswien.codegarden.navigation.Screen
 import at.ac.fhcampuswien.codegarden.viewModels.CommunityViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
@@ -87,7 +88,7 @@ fun CreatePostScreen(navController: NavHostController) {
                             "Post created!",
                             Toast.LENGTH_SHORT
                         ).show()
-                        navController.popBackStack()
+                        navController.navigate(Screen.CommunityScreen.route)
                     }
                 },
                 modifier = Modifier.align(Alignment.End)

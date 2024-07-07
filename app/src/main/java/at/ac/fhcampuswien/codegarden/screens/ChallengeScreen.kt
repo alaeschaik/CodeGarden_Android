@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.codegarden.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +25,8 @@ import at.ac.fhcampuswien.codegarden.navigation.Screen
 import at.ac.fhcampuswien.codegarden.viewModels.ChallengeViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
+import androidx.compose.ui.viewinterop.AndroidView
+import android.webkit.WebView
 
 @Composable
 fun ChallengeScreen(sectionId: Int, navController: NavController) {
@@ -43,7 +46,7 @@ fun ChallengeScreen(sectionId: Int, navController: NavController) {
             SimpleTopAppBar(
                 title = "Challenges",
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate("${Screen.ChallengeScreen.route}/${sectionId}") }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
             })
@@ -74,7 +77,22 @@ fun ChallengeCard(
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column {
-            Text(text = challenge.content)
+            HtmlContentViewer(htmlContent = challenge.content, modifier = Modifier.padding(8.dp))
         }
     }
+}
+
+@SuppressLint("SetJavaScriptEnabled")
+@Composable
+fun HtmlContentViewer(htmlContent: String, modifier: Modifier = Modifier) {
+    AndroidView(
+        factory = { context ->
+            WebView(context).apply {
+                settings.javaScriptEnabled = true
+                // Ensure any relative URL or content is correctly interpreted
+                loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
+            }
+        },
+        modifier = modifier
+    )
 }

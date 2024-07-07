@@ -124,11 +124,6 @@ class UserServiceImpl(
         lastname: String?
     ): Flow<Boolean> = flow {
         try {
-            if (username == null || email == null || firstname == null || lastname == null) {
-                showToast("No changes made")
-                emit(false)
-                return@flow
-            }
             val userId = sharedPrefManager.fetchUserId() ?: throw IllegalStateException("User ID not found")
             val token = "Bearer ${sharedPrefManager.fetchToken()}"
             val requestBody = UpdateProfileRequest(username, email, firstname, lastname)

@@ -6,7 +6,6 @@ import at.ac.fhcampuswien.codegarden.endpoints.users.User
 import at.ac.fhcampuswien.codegarden.endpoints.users.UserService
 import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -28,10 +27,6 @@ class ProfileViewModel(
     val lastname = _lastname.asStateFlow()
 
     private val _userProfile = MutableStateFlow<User?>(null)
-    val userProfile: StateFlow<User?> = _userProfile
-
-    private val _updateResult = MutableStateFlow<Boolean?>(null)
-    val updateResult: StateFlow<Boolean?> = _updateResult
 
     init {
         viewModelScope.launch {
@@ -54,31 +49,21 @@ class ProfileViewModel(
     }
 
     fun updateProfile(
-        username: String,
-        email: String,
-        firstname: String,
-        lastname: String
+        username: String?,
+        email: String?,
+        firstname: String?,
+        lastname: String?
     ) {
         viewModelScope.launch {
-            userService.updateUserProfile(username, email, firstname, lastname)
-                .collect { result ->
-                    if (result) {
-                        // Update local state immediately after a successful update
-                        _username.value = username
-                        _email.value = email
-                        _firstname.value = firstname
-                        _lastname.value = lastname
-                    }
+            userService.updateUserProfile(
+                if (_userProfile.value?.username == username) null else username,
+                if (_userProfile.value?.email == email) null else email,
+                if (_userProfile.value?.firstname == firstname) null else firstname,
+                if (_userProfile.value?.lastname == lastname) null else lastname
+            )
+                .collect { _ ->
                 }
-        }
-    }
-
-    fun reloadUserProfile() {
-        viewModelScope.launch {
-            val userId = sharedPrefManager.fetchUserId()
-            if (userId != null) {
-                loadUserProfile(userId)
-            }
+            loadUserProfile(sharedPrefManager.fetchUserId()!!)
         }
     }
 

@@ -1,7 +1,6 @@
 package at.ac.fhcampuswien.codegarden.viewModels
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,7 +68,7 @@ class CommunityViewModel(
         // If the comment was successful, call onCommentSuccess
         viewModelScope.launch {
             val userId = sharedPrefManager.fetchUserId() ?: -1
-            val requestBody = CreateCommentRequest(userId, postId, content)
+            val requestBody = CreateCommentRequest(postId, userId, content)
             commentService.createComment(requestBody).collect { response ->
                 onCommentSuccess(response)
             }

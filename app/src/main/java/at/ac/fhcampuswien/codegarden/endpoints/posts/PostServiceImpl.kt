@@ -14,6 +14,7 @@ interface PostService {
     suspend fun getComments(id: Int): Flow<List<Comment>>
     suspend fun getUser(id: Int): Flow<User?>
     suspend fun updatePost(id: Int, request: UpdatePostRequest): Flow<Boolean>
+    suspend fun deletePost(id: Int): Flow<Boolean>
 }
 
 class PostServiceImpl(
@@ -97,6 +98,22 @@ class PostServiceImpl(
 
             Log.e("PostServiceImpl", response.errorBody().toString())
             Toast.makeText(context, "Failed to update post", Toast.LENGTH_LONG).show()
+            emit(false)
+        }
+    }
+
+    override suspend fun deletePost(id: Int): Flow<Boolean> {
+        return flow {
+            val token = "Bearer ${sharedPrefManager.fetchToken()}"
+            val response = postApi.deletePost(id, token)
+
+            if (response.isSuccessful) {
+                emit(true)
+                return@flow
+            }
+
+            Log.e("PostServiceImpl", response.errorBody().toString())
+            Toast.makeText(context, "Failed to delete post", Toast.LENGTH_LONG).show()
             emit(false)
         }
     }

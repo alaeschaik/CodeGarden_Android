@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import at.ac.fhcampuswien.codegarden.screens.ChallengeScreen
 import at.ac.fhcampuswien.codegarden.screens.CommunityScreen
+import at.ac.fhcampuswien.codegarden.screens.CreateDiscussionScreen
 import at.ac.fhcampuswien.codegarden.screens.CreateModuleScreen
 import at.ac.fhcampuswien.codegarden.screens.CreatePostScreen
 import at.ac.fhcampuswien.codegarden.screens.LeaderBoardScreen
@@ -68,6 +69,10 @@ fun Navigation() {
         composable("${Screen.ChallengeScreen.route}/{sectionId}") { backStackEntry ->
             val sectionId = backStackEntry.arguments?.getString("sectionId")?.toInt() ?: return@composable
             ChallengeScreen(sectionId = sectionId, navController = navController)
+        }
+
+        composable(route = Screen.CreateDiscussionScreen.route) {
+            CreateDiscussionScreen(navController = navController)
         }
     }
 }

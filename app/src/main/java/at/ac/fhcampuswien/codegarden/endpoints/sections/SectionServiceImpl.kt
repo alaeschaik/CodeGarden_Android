@@ -14,7 +14,7 @@ interface SectionService {
     suspend fun getAllSections(): Flow<List<Section>>
     suspend fun getSection(id: Int): Flow<Section>
     suspend fun getSectionModule(id: Int): Flow<Module>
-    suspend fun getSectionChallenges(int: Int): Flow<List<Challenge>>
+    suspend fun getSectionChallenges(id: Int): Flow<List<Challenge>>
     suspend fun updateSection(id: Int, request: UpdateSectionRequest): Flow<Boolean>
     suspend fun deleteSection(id: Int): Flow<Boolean>
 }

@@ -27,13 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
-import at.ac.fhcampuswien.codegarden.navigation.Screen
 import at.ac.fhcampuswien.codegarden.viewModels.CommunityViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 
 @Composable
-fun CreatePostScreen(navController: NavHostController) {
+fun CreateDiscussionScreen(navController: NavHostController) {
     val viewModel = viewModel<CommunityViewModel>(
         factory = viewModelFactory {
             CommunityViewModel(
@@ -49,7 +48,7 @@ fun CreatePostScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            SimpleTopAppBar(title = "Create new Post",
+            SimpleTopAppBar(title = "Create new Discussion",
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -83,18 +82,18 @@ fun CreatePostScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    viewModel.createPost(title.text, content.text) {
+                    viewModel.createDiscussion(title.text, content.text) {
                         Toast.makeText(
                             appModule.applicationContext,
-                            "Post created!",
+                            "Discussion created!",
                             Toast.LENGTH_SHORT
                         ).show()
-                        navController.navigate(Screen.CommunityScreen.route)
+                        navController.popBackStack()
                     }
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text("Post")
+                Text("Create")
             }
         }
     }

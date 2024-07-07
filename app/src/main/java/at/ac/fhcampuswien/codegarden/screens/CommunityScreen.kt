@@ -33,12 +33,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
+import at.ac.fhcampuswien.codegarden.endpoints.discussions.Discussion
 import at.ac.fhcampuswien.codegarden.endpoints.posts.Comment
 import at.ac.fhcampuswien.codegarden.endpoints.posts.Post
 import at.ac.fhcampuswien.codegarden.navigation.Screen
@@ -67,12 +71,15 @@ fun CommunityScreen(navController: NavController) {
         factory = viewModelFactory {
             CommunityViewModel(
                 appModule.postService,
+                appModule.discussionService,
                 appModule.commentService,
                 appModule.sharedPrefManager
             )
         }
     )
-    val posts = viewModel.posts.collectAsState().value
+    var selectedTab by remember { mutableIntStateOf(0) }
+
+    val tabs = listOf("Posts", "Discussions")
 
     Scaffold(
         topBar = {
@@ -101,24 +108,162 @@ fun CommunityScreen(navController: NavController) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(posts) { post ->
-                    PostCard(
-                        viewModel = viewModel,
-                        post = post,
-                        onLikeClicked = {
-                            post.upvotes.intValue += 1
-                            viewModel.updatePost(post)
-                        },
-                        onDislikeClicked = {
-                            post.downvotes.intValue += 1
-                            viewModel.updatePost(post)
-                        }
+            TabRow(selectedTabIndex = selectedTab) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        text = { Text(title) },
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index }
                     )
                 }
             }
+
+            when (selectedTab) {
+                0 -> PostContent(viewModel)
+                1 -> DiscussionContent(viewModel)
+            }
+        }
+    }
+}
+
+@Composable
+fun PostContent(
+    viewModel: CommunityViewModel
+) {
+    val posts = viewModel.posts.collectAsState().value
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        items(posts) { post ->
+            PostCard(
+                viewModel = viewModel,
+                post = post,
+                onLikeClicked = {
+                    post.upvotes.intValue += 1
+                    viewModel.updatePost(post)
+                },
+                onDislikeClicked = {
+                    post.downvotes.intValue += 1
+                    viewModel.updatePost(post)
+                },
+                onDeleted = {
+                    viewModel.deletePost(post.id) {
+                        Toast.makeText(
+                            appModule.applicationContext,
+                            "Post deleted!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    posts.filter { it.id != post.id }
+                }
+            )
+        }
+    }
+}
+
+
+@Composable
+fun DiscussionContent(
+    viewModel: CommunityViewModel
+) {
+    val discussions = viewModel.discussions.collectAsState().value
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        items(discussions) { discussion ->
+            DiscussionCard(
+                viewModel = viewModel,
+                discussion = discussion,
+                onDeleted = {
+                    viewModel.deleteDiscussion(discussion.id) {
+                        Toast.makeText(
+                            appModule.applicationContext,
+                            "Discussion deleted!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    discussions.filter { it.id != discussion.id}
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun DiscussionCard(
+    viewModel: CommunityViewModel,
+    discussion: Discussion,
+    onDeleted: () -> Unit
+) {
+    var username by remember { mutableStateOf("username") }
+    username = viewModel.getUserNameForDiscussion(discussion.id)
+    var isEditing by remember { mutableStateOf(false) }
+    var editableText by remember { mutableStateOf(discussion.content) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(Color.Gray, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = username.firstOrNull().toString(),
+                        color = Color.White
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = username, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.weight(1f))
+                if (isEditing){
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(
+                        onClick = {
+                            isEditing = !isEditing
+                            onDeleted()
+                        },
+                    ) {
+                        Text("Delete")
+                    }
+                }
+                TextButton(
+                    onClick = {
+                        isEditing = !isEditing
+                        if (!isEditing) {
+                            discussion.content = editableText
+                            viewModel.updateDiscussion(discussion)
+                        }
+                    },
+                ) {
+                    Text(if (isEditing) "Save" else "Edit")
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            if (isEditing) {
+                TextField(
+                    value = editableText,
+                    onValueChange = { editableText = it },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(text = editableText)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Posted at: ${convertTimestamp(discussion.createdAt)}",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+
         }
     }
 }
@@ -238,6 +383,7 @@ fun PostCard(
     post: Post,
     onLikeClicked: () -> Unit,
     onDislikeClicked: () -> Unit,
+    onDeleted: () -> Unit
 ) {
     var showComments by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("username") }
@@ -267,13 +413,18 @@ fun PostCard(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = username, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Posted at: ${convertTimestamp(post.createdAt)}",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
                 Spacer(modifier = Modifier.weight(1f))
+                if (isEditing){
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(
+                        onClick = {
+                            isEditing = !isEditing
+                            onDeleted()
+                        },
+                    ) {
+                        Text("Delete")
+                    }
+                }
                 TextButton(
                     onClick = {
                         isEditing = !isEditing
@@ -338,6 +489,13 @@ fun PostCard(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Posted at: ${convertTimestamp(post.createdAt)}",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
         }
         PostComments(
             postId = post.id,

@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.codegarden.endpoints.posts
 import at.ac.fhcampuswien.codegarden.endpoints.users.User
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -37,5 +38,11 @@ interface PostApi {
         @Path("id") id: Int,
         @Header("Authorization") token: String,
         @Body request: UpdatePostRequest
+    ): Response<Boolean>
+
+    @DELETE("posts/{id}")
+    suspend fun deletePost(
+        @Path("id") id: Int,
+        @Header("Authorization") token: String
     ): Response<Boolean>
 }

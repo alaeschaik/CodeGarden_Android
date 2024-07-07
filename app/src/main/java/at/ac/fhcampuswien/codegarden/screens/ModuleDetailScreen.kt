@@ -93,7 +93,7 @@ fun ModuleDetailCard(
             ) {
                 Text(
                     text = section.title,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }

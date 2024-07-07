@@ -15,16 +15,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -41,12 +35,11 @@ import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 fun LeaderBoardScreen(navController: NavController) {
     val viewModel: LeaderboardViewModel = viewModel(
         factory = viewModelFactory {
-            LeaderboardViewModel(appModule.userService)
+            LeaderboardViewModel(
+                appModule.userService
+            )
         }
     )
-    var selectedTab by remember { mutableIntStateOf(0) }
-
-    val tabs = listOf("Leaderboard", "Achievements")
 
     Scaffold(
         topBar = {
@@ -69,20 +62,7 @@ fun LeaderBoardScreen(navController: NavController) {
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            TabRow(selectedTabIndex = selectedTab) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        text = { Text(title) },
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index }
-                    )
-                }
-            }
-
-            when (selectedTab) {
-                0 -> LeaderboardContent(viewModel)
-                1 -> AchievementsContent()
-            }
+            LeaderboardContent(viewModel)
         }
     }
 }
@@ -118,47 +98,9 @@ fun LeaderboardContent(viewModel: LeaderboardViewModel) {
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = "${rankedUser.user.xpPoints} XP",
+                        text = "${rankedUser.user.xpPoints.toInt()} XP",
                         modifier = Modifier.alignByBaseline()
                     )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun AchievementsContent() {
-    val achievementsItems = listOf(
-        "Novice - Finish 1 Quiz",
-        "Beginner - Finish 5 Quizzes",
-        "Intermediate - Finish 25 Quizzes"
-    )
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(achievementsItems) { item ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.LightGray,
-                    contentColor = Color.Black
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = item)
                 }
             }
         }

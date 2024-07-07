@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.flow
 
 interface CommentService {
     suspend fun getUser(id: Int): Flow<User?>
+    suspend fun createComment(requestBody: CreateCommentRequest): Flow<CreateCommentResponse>
+    suspend fun deleteComment(id: Int): Flow<Unit>
 }
 
 class CommentServiceImpl(
@@ -29,6 +31,34 @@ class CommentServiceImpl(
             }
             Log.e("CommentServiceImpl", response.errorBody().toString())
             Toast.makeText(context, "Failed to fetch user", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override suspend fun createComment(requestBody: CreateCommentRequest): Flow<CreateCommentResponse> {
+        return flow {
+            val token = "Bearer ${sharedPrefManager.fetchToken()}"
+            val response = commentApi.createComment(token, requestBody)
+
+            response.body()?.let {
+                emit(it)
+                return@flow
+            }
+            Log.e("CommentServiceImpl", response.errorBody().toString())
+            Toast.makeText(context, "Failed to create comment", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override suspend fun deleteComment(id: Int): Flow<Unit> {
+        return flow {
+            val token = "Bearer ${sharedPrefManager.fetchToken()}"
+            val response = commentApi.deleteComment(token, id)
+
+            if (response.isSuccessful) {
+                emit(Unit)
+                return@flow
+            }
+            Log.e("CommentServiceImpl", response.errorBody().toString())
+            Toast.makeText(context, "Failed to delete comment", Toast.LENGTH_LONG).show()
         }
     }
 }

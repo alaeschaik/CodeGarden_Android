@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -19,14 +20,11 @@ import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
 import at.ac.fhcampuswien.codegarden.viewModels.ModuleViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import androidx.compose.runtime.collectAsState
-import androidx.compose.material3.Scaffold
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 import androidx.compose.material3.IconButton
 import at.ac.fhcampuswien.codegarden.navigation.Screen
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -60,8 +58,8 @@ fun ModuleScreen(navController: NavController) {
             SimpleTopAppBar(
                 title = "Home",
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate(Screen.ModuleScreen.route) }) {
-                        Icon(imageVector = Icons.Default.Home, contentDescription = "Home")
+                    IconButton(onClick = { navController.navigate(Screen.ProfileScreen.route) }) {
+                        Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Profile")
                     }
                 },
                 actions = {

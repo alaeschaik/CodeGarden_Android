@@ -20,8 +20,6 @@ class ModuleDetailViewModel(
     private val _sections = MutableStateFlow<List<Section>>(emptyList())
     val sections = _sections.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-
     init {
         getModuleSections(moduleId) { sections ->
             _sections.value = sections

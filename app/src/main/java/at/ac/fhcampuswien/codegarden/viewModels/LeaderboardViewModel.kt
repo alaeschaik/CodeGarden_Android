@@ -35,12 +35,16 @@ class LeaderboardViewModel(
         if (users.isEmpty()) return emptyList()
         val rankedUsers = mutableListOf<RankedUser>()
         var currentRank = 1
-        for (i in users.indices) {
-            if (i > 0 && users[i].xpPoints < users[i - 1].xpPoints) {
-                currentRank = i + 1
+
+        rankedUsers.add(RankedUser(currentRank, users[0]))
+
+        for (i in 1 until users.size) {
+            if (users[i].xpPoints < users[i - 1].xpPoints) {
+                currentRank++
             }
             rankedUsers.add(RankedUser(currentRank, users[i]))
         }
+
         return rankedUsers
     }
 }

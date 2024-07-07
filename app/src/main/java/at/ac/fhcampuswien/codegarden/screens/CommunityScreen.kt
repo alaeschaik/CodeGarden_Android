@@ -32,6 +32,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -60,6 +61,20 @@ import at.ac.fhcampuswien.codegarden.viewModels.CommunityViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
+import kotlin.math.absoluteValue
+
+val colors = listOf(
+    Color(0xFFFFCDD2), // Light Red
+    Color(0xFFBBDEFB), // Light Blue
+    Color(0xFFC8E6C9), // Light Green
+    Color(0xFFFFF9C4), // Light Yellow
+    Color(0xFFB2EBF2), // Light Cyan
+    Color(0xFFE1BEE7), // Light Magenta
+    Color(0xFFEEEEEE), // Light Gray
+    Color(0xFFF5F5F5), // Lighter Gray
+    Color(0xFFE0E0E0), // Light Dark Gray
+    Color(0xFFBDBDBD)  // Light Black
+)
 
 @Composable
 fun CommunityScreen(navController: NavController) {
@@ -151,7 +166,7 @@ fun PostComments(
                     onValueChange = { commentText.value = it },
                     modifier = Modifier
                         .weight(1f)
-                        .background(Color.LightGray, shape = CircleShape)
+                        .background(MaterialTheme.colorScheme.onPrimary, shape = CircleShape)
                         .padding(16.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -180,6 +195,13 @@ fun CommentItem(
     viewModel: CommunityViewModel,
     onCommentDeleted: (Comment) -> Unit
 ) {
+    fun getColorForUsername(username: String): Color {
+        val hash = username.hashCode().absoluteValue
+        return colors[hash % colors.size]
+    }
+
+    val backgroundColor = getColorForUsername(username)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -191,12 +213,12 @@ fun CommentItem(
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                        .background(Color.Gray, shape = CircleShape),
+                        .background(backgroundColor, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = username.firstOrNull().toString(),
-                        color = Color.White
+                        color = Color.Black
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -247,6 +269,13 @@ fun PostCard(
     var isEditing by remember { mutableStateOf(false) }
     var editableText by remember { mutableStateOf(post.content) }
 
+    fun getColorForUsername(username: String): Color {
+        val hash = username.hashCode().absoluteValue
+        return colors[hash % colors.size]
+    }
+
+    val backgroundColor = getColorForUsername(username)
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -257,12 +286,12 @@ fun PostCard(
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                        .background(Color.Gray, shape = CircleShape),
+                        .background(backgroundColor, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = username.firstOrNull().toString(),
-                        color = Color.White
+                        color = Color.Black
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))

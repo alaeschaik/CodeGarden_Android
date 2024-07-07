@@ -14,6 +14,9 @@ import at.ac.fhcampuswien.codegarden.endpoints.modules.ModuleServiceImpl
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostApi
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostService
 import at.ac.fhcampuswien.codegarden.endpoints.posts.PostServiceImpl
+import at.ac.fhcampuswien.codegarden.endpoints.questions.QuestionApi
+import at.ac.fhcampuswien.codegarden.endpoints.questions.QuestionService
+import at.ac.fhcampuswien.codegarden.endpoints.questions.QuestionServiceImpl
 import at.ac.fhcampuswien.codegarden.endpoints.sections.SectionApi
 import at.ac.fhcampuswien.codegarden.endpoints.sections.SectionService
 import at.ac.fhcampuswien.codegarden.endpoints.sections.SectionServiceImpl
@@ -38,12 +41,14 @@ interface AppModule {
     val moduleApi: ModuleApi
     val sectionApi: SectionApi
     val challengeApi: ChallengeApi
+    val questionApi: QuestionApi
     val userService: UserService
     val postService: PostService
     val commentService: CommentService
     val moduleService: ModuleService
     val sectionService: SectionService
     val challengeService: ChallengeService
+    val questionService: QuestionService
     val sharedPrefManager: SharedPrefManager
     val applicationContext: Context
 }
@@ -158,6 +163,23 @@ class AppModuleImpl(private val appContext: Context) : AppModule {
             .create(ChallengeApi::class.java)
     }
 
+    override val questionApi: QuestionApi by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://api.sheikhs.at/api/")
+            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
+            .client(
+                OkHttpClient.Builder()
+                    .connectTimeout(
+                        20,
+                        TimeUnit.SECONDS
+                    ) // Increase the connection timeout to 20 seconds
+                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
+                    .build()
+            )
+            .build()
+            .create(QuestionApi::class.java)
+    }
+
     override val sharedPrefManager: SharedPrefManager by lazy {
         SharedPrefManagerImpl(appContext)
     }
@@ -186,5 +208,9 @@ class AppModuleImpl(private val appContext: Context) : AppModule {
 
     override val challengeService: ChallengeService by lazy {
         ChallengeServiceImpl(appContext, challengeApi, sharedPrefManager)
+    }
+
+    override val questionService: QuestionService by lazy {
+        QuestionServiceImpl(appContext, questionApi, sharedPrefManager)
     }
 }

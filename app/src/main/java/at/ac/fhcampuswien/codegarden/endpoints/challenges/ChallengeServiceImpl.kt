@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.codegarden.endpoints.challenges
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import at.ac.fhcampuswien.codegarden.endpoints.questions.Question
 import at.ac.fhcampuswien.codegarden.endpoints.sections.Section
 import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +16,7 @@ interface ChallengeService {
     suspend fun updateChallenge(id: Int, request: UpdateChallengeRequest): Flow<Boolean>
     suspend fun deleteChallenge(id: Int): Flow<Boolean>
     suspend fun getChallengeSection(id: Int): Flow<Section>
-    // suspend fun getChallengeQuestions(id: Int): Flow<List<Question>>
+    suspend fun getChallengeQuestions(id: Int): Flow<List<Question>>
 }
 
 class ChallengeServiceImpl(
@@ -121,18 +122,18 @@ class ChallengeServiceImpl(
         }
     }
 
-//    override suspend fun getChallengeQuestions(id: Int): Flow<List<Question>> {
-//        return flow {
-//            val token = "Bearer ${sharedPrefManager.fetchToken()}"
-//            val response = challengeApi.getChallengeQuestions(id, token)
-//
-//            response.body()?.let {
-//                emit(it)
-//                return@flow
-//            }
-//
-//            Log.e("ChallengeServiceImpl", response.errorBody().toString())
-//            Toast.makeText(context, "Failed to fetch challenge questions", Toast.LENGTH_LONG).show()
-//        }
-//    }
+    override suspend fun getChallengeQuestions(id: Int): Flow<List<Question>> {
+        return flow {
+            val token = "Bearer ${sharedPrefManager.fetchToken()}"
+            val response = challengeApi.getChallengeQuestions(id, token)
+
+            response.body()?.let {
+                emit(it)
+                return@flow
+            }
+
+            Log.e("ChallengeServiceImpl", response.errorBody().toString())
+            Toast.makeText(context, "Failed to fetch challenge questions", Toast.LENGTH_LONG).show()
+        }
+    }
 }

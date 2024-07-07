@@ -27,6 +27,11 @@ import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 import androidx.compose.ui.viewinterop.AndroidView
 import android.webkit.WebView
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 
 @Composable
 fun ChallengeScreen(sectionId: Int, navController: NavController) {
@@ -34,6 +39,7 @@ fun ChallengeScreen(sectionId: Int, navController: NavController) {
         factory = viewModelFactory {
             ChallengeViewModel(
                 appModule.sectionService,
+                appModule.challengeService,
                 appModule.sharedPrefManager,
                 sectionId
             )
@@ -74,25 +80,35 @@ fun ChallengeCard(
 ) {
     Card(
         modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
+        elevation = CardDefaults.cardElevation(8.dp),
     ) {
         Column {
-            HtmlContentViewer(htmlContent = challenge.content, modifier = Modifier.padding(8.dp))
+            HtmlContentViewer(htmlContent = challenge.content, modifier = Modifier.padding(8.dp), onClicked = {viewModel.getChallengeQuestions(challenge.id) {
+                if (it.isNotEmpty())
+                navController.navigate(Screen.QuestionScreen.route + "/${challenge.id}")
+            }})
         }
     }
 }
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun HtmlContentViewer(htmlContent: String, modifier: Modifier = Modifier) {
-    AndroidView(
-        factory = { context ->
-            WebView(context).apply {
-                settings.javaScriptEnabled = true
-                // Ensure any relative URL or content is correctly interpreted
-                loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
+fun HtmlContentViewer(htmlContent: String, modifier: Modifier = Modifier, onClicked: () -> Unit = {}) {
+    Box(modifier = modifier) {
+        AndroidView(
+            factory = { context ->
+                WebView(context).apply {
+                    settings.javaScriptEnabled = true
+                    loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
+                    setBackgroundColor(Color.Transparent.toArgb())
+                }
             }
-        },
-        modifier = modifier
-    )
+        )
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(Color.Transparent)
+                .clickable(onClick = onClicked)
+        )
+    }
 }

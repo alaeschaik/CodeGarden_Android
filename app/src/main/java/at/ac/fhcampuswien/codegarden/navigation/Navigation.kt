@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import at.ac.fhcampuswien.codegarden.screens.ChallengeScreen
 import at.ac.fhcampuswien.codegarden.screens.CommunityScreen
 import at.ac.fhcampuswien.codegarden.screens.CreateModuleScreen
 import at.ac.fhcampuswien.codegarden.screens.CreatePostScreen
@@ -62,6 +63,11 @@ fun Navigation() {
         composable("${Screen.ModuleDetailScreen.route}/{moduleId}") { backStackEntry ->
             val moduleId = backStackEntry.arguments?.getString("moduleId")?.toInt() ?: return@composable
             ModuleDetailScreen(moduleId = moduleId, navController = navController)
+        }
+
+        composable("${Screen.ChallengeScreen.route}/{sectionId}") { backStackEntry ->
+            val sectionId = backStackEntry.arguments?.getString("sectionId")?.toInt() ?: return@composable
+            ChallengeScreen(sectionId = sectionId, navController = navController)
         }
     }
 }

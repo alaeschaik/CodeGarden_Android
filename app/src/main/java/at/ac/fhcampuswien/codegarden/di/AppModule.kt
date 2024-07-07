@@ -2,6 +2,9 @@ package at.ac.fhcampuswien.codegarden.di
 
 import android.content.Context
 import androidx.compose.runtime.MutableIntState
+import at.ac.fhcampuswien.codegarden.endpoints.challenges.ChallengeApi
+import at.ac.fhcampuswien.codegarden.endpoints.challenges.ChallengeService
+import at.ac.fhcampuswien.codegarden.endpoints.challenges.ChallengeServiceImpl
 import at.ac.fhcampuswien.codegarden.endpoints.comments.CommentApi
 import at.ac.fhcampuswien.codegarden.endpoints.comments.CommentService
 import at.ac.fhcampuswien.codegarden.endpoints.comments.CommentServiceImpl
@@ -34,11 +37,13 @@ interface AppModule {
     val commentApi: CommentApi
     val moduleApi: ModuleApi
     val sectionApi: SectionApi
+    val challengeApi: ChallengeApi
     val userService: UserService
     val postService: PostService
     val commentService: CommentService
     val moduleService: ModuleService
     val sectionService: SectionService
+    val challengeService: ChallengeService
     val sharedPrefManager: SharedPrefManager
     val applicationContext: Context
 }
@@ -136,6 +141,23 @@ class AppModuleImpl(private val appContext: Context) : AppModule {
             .create(SectionApi::class.java)
     }
 
+    override val challengeApi: ChallengeApi by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://api.sheikhs.at/api/")
+            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
+            .client(
+                OkHttpClient.Builder()
+                    .connectTimeout(
+                        20,
+                        TimeUnit.SECONDS
+                    ) // Increase the connection timeout to 20 seconds
+                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
+                    .build()
+            )
+            .build()
+            .create(ChallengeApi::class.java)
+    }
+
     override val sharedPrefManager: SharedPrefManager by lazy {
         SharedPrefManagerImpl(appContext)
     }
@@ -160,5 +182,9 @@ class AppModuleImpl(private val appContext: Context) : AppModule {
 
     override val sectionService: SectionService by lazy {
         SectionServiceImpl(appContext, sectionApi, sharedPrefManager)
+    }
+
+    override val challengeService: ChallengeService by lazy {
+        ChallengeServiceImpl(appContext, challengeApi, sharedPrefManager)
     }
 }

@@ -3,10 +3,12 @@ package at.ac.fhcampuswien.codegarden.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.ac.fhcampuswien.codegarden.endpoints.challenges.ChallengeService
+import at.ac.fhcampuswien.codegarden.endpoints.choices.Choice
 import at.ac.fhcampuswien.codegarden.endpoints.questions.AnswerQuestionRequest
 import at.ac.fhcampuswien.codegarden.endpoints.questions.Question
 import at.ac.fhcampuswien.codegarden.endpoints.questions.QuestionService
-import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
+import at.ac.fhcampuswien.codegarden.endpoints.users.UpdateUserXpPointsRequest
+import at.ac.fhcampuswien.codegarden.endpoints.users.UserService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -14,7 +16,7 @@ import kotlinx.coroutines.launch
 class QuestionViewModel(
     private val challengeService: ChallengeService,
     private val questionService: QuestionService,
-    private val sharedPrefManager: SharedPrefManager,
+    private val userService: UserService,
     challengeId: Int
 ) : ViewModel() {
 
@@ -31,6 +33,23 @@ class QuestionViewModel(
         viewModelScope.launch {
             challengeService.getChallengeQuestions(id).collect { questions ->
                 onQuestionsFetched(questions)
+            }
+        }
+    }
+
+    fun getQuestionChoices(id: Int, onChoicesFetched: (choices: List<Choice>) -> Unit) {
+        viewModelScope.launch {
+            questionService.getQuestionChoices(id).collect { choices ->
+                onChoicesFetched(choices)
+            }
+        }
+    }
+
+    fun updateUserXpPoints(xpPoints: Float, onUpdated: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val request = UpdateUserXpPointsRequest(xpPoints)
+            userService.updateUserXpPoints(request).collect { success ->
+                onUpdated(success)
             }
         }
     }

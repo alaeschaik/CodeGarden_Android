@@ -53,3 +53,7 @@ data class UpdateProfileRequest(
     val firstname: String?,
     val lastname: String?
 )
+
+data class UpdateUserXpPointsRequest(
+    val xpPoints: Float
+)

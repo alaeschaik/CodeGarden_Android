@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.codegarden.endpoints.questions
 
+import at.ac.fhcampuswien.codegarden.endpoints.choices.Choice
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -39,10 +40,16 @@ interface QuestionApi {
         @Header("Authorization") token: String,
     ): Response<Boolean>
 
+    @GET("questions/{id}/choices")
+    suspend fun getQuestionChoices(
+        @Path("id") id: Int,
+        @Header("Authorization") token: String
+    ): Response<List<Choice>>
+
     @POST("questions/{id}/answer")
     suspend fun answerQuestion(
         @Path("id") id: Int,
         @Header("Authorization") token: String,
         @Body request: AnswerQuestionRequest
-    ): Response<Boolean>
+    ): Response<Unit>
 }

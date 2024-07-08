@@ -42,13 +42,13 @@ class ProfileViewModel(
         viewModelScope.launch {
             val userId = sharedPrefManager.fetchUserId()
             if (userId != null) {
-                loadUserProfile(userId)
+                loadUserProfile()
             }
         }
     }
 
-    private suspend fun loadUserProfile(userId: Int) {
-        val user = userService.getUserProfile(userId)
+    private suspend fun loadUserProfile() {
+        val user = userService.getUserProfile()
         user?.let {
             _username.value = it.username
             _email.value = it.email
@@ -73,7 +73,7 @@ class ProfileViewModel(
             )
                 .collect { _ ->
                 }
-            loadUserProfile(sharedPrefManager.fetchUserId()!!)
+            loadUserProfile()
         }
     }
 

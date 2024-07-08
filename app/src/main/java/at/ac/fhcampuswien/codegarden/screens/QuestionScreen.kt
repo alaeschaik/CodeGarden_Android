@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
 import at.ac.fhcampuswien.codegarden.endpoints.questions.AnswerQuestionRequest
 import at.ac.fhcampuswien.codegarden.endpoints.questions.Question
+import at.ac.fhcampuswien.codegarden.navigation.Screen
 import at.ac.fhcampuswien.codegarden.viewModels.QuestionViewModel
 import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
 import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
@@ -42,7 +43,7 @@ fun QuestionScreen(challengeId: Int, navController: NavController) {
             QuestionViewModel(
                 appModule.challengeService,
                 appModule.questionService,
-                appModule.sharedPrefManager,
+                appModule.userService,
                 challengeId
             )
         }
@@ -66,7 +67,8 @@ fun QuestionScreen(challengeId: Int, navController: NavController) {
                     QuestionCard(
                         viewModel = viewModel,
                         question = question,
-                        navController = navController
+                        navController = navController,
+                        questionType = question.type
                     )
                 }
             }
@@ -78,7 +80,8 @@ fun QuestionScreen(challengeId: Int, navController: NavController) {
 fun QuestionCard(
     viewModel: QuestionViewModel,
     question: Question,
-    navController: NavController
+    navController: NavController,
+    questionType: String
 ) {
     var answerText by remember { mutableStateOf("") }
 
@@ -87,31 +90,43 @@ fun QuestionCard(
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column {
-            HtmlContentViewer(htmlContent = question.content, modifier = Modifier.padding(8.dp))
-            OutlinedTextField(
-                value = answerText,
-                onValueChange = { answerText = it },
-                label = { Text("Your Answer") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .height(100.dp),
-                textStyle = LocalTextStyle.current.copy(fontSize = 20.sp)
-            )
-            Button(
-                onClick = {
-                    val request = AnswerQuestionRequest(content = answerText, correctAnswer = question.correctAnswer)
-                    viewModel.answerQuestion(question.id, request, onAnswered = { success ->
-                        if (success && question.correctAnswer == answerText) {
-                            answerText = ""
-                        } else {
-                            // Show error message
-                        }
-                    })
-                },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text("Submit")
+            HtmlContentViewer(
+                htmlContent = question.content,
+                modifier = Modifier.padding(8.dp),
+                onClicked = {
+                    viewModel.getQuestionChoices(question.id) {
+                        if (it.isNotEmpty())
+                            navController.navigate(Screen.ChoiceScreen.route + "/${question.id}")
+                    }
+                })
+            if (questionType == "Question") {
+
+                OutlinedTextField(
+                    value = answerText,
+                    onValueChange = { answerText = it },
+                    label = { Text("Your Answer") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .height(100.dp),
+                    textStyle = LocalTextStyle.current.copy(fontSize = 20.sp)
+                )
+                Button(
+                    onClick = {
+                        val request = AnswerQuestionRequest(
+                            answer = answerText
+                        )
+                        viewModel.answerQuestion(question.id, request, onAnswered = { success ->
+                            if (success) {
+                                viewModel.updateUserXpPoints(question.xpPoints, onUpdated = {})
+                                answerText = ""
+                            }
+                        })
+                    },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text("Submit")
+                }
             }
         }
     }

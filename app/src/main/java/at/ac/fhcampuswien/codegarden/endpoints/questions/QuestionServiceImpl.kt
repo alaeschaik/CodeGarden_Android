@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.codegarden.endpoints.questions
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import at.ac.fhcampuswien.codegarden.endpoints.choices.Choice
 import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,6 +14,7 @@ interface QuestionService {
     suspend fun getQuestion(id: Int): Flow<Question>
     suspend fun updateQuestion(id: Int, request: UpdateQuestionRequest): Flow<Boolean>
     suspend fun deleteQuestion(id: Int): Flow<Boolean>
+    suspend fun getQuestionChoices(id: Int): Flow<List<Choice>>
     suspend fun answerQuestion(id: Int, request: AnswerQuestionRequest): Flow<Boolean>
 }
 
@@ -102,13 +104,30 @@ class QuestionServiceImpl(
         }
     }
 
+    override suspend fun getQuestionChoices(id: Int): Flow<List<Choice>> {
+        return flow {
+            val token = "Bearer ${sharedPrefManager.fetchToken()}"
+            val response = questionApi.getQuestionChoices(id, token)
+
+            println(response.body())
+
+            response.body()?.let {
+                emit(it)
+                return@flow
+            }
+
+            Log.e("ChoiceServiceImpl", response.errorBody().toString())
+            Toast.makeText(context, "Failed to fetch question choices", Toast.LENGTH_LONG).show()
+        }
+    }
+
     override suspend fun answerQuestion(id: Int, request: AnswerQuestionRequest): Flow<Boolean> {
         return flow {
             val token = "Bearer ${sharedPrefManager.fetchToken()}"
             val response = questionApi.answerQuestion(id, token, request)
 
             response.body()?.let {
-                emit(it)
+                emit(true)
                 return@flow
             }
 

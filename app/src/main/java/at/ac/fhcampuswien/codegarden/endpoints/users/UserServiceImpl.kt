@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.codegarden.endpoints.users
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,7 @@ interface UserService {
         lastname: String
     ): Boolean
 
-    suspend fun getUserProfile(userId: Int): User?
+    suspend fun getUserProfile(): User?
     suspend fun getAllUsers(): List<User>
     suspend fun resetPassword(username: String, oldPassword: String, newPassword: String): Boolean
     suspend fun updateUserProfile(
@@ -25,6 +26,7 @@ interface UserService {
         firstname: String?,
         lastname: String?
     ): Flow<Boolean>
+    suspend fun updateUserXpPoints(request: UpdateUserXpPointsRequest): Flow<Boolean>
 }
 
 class UserServiceImpl(
@@ -76,8 +78,9 @@ class UserServiceImpl(
         return false
     }
 
-    override suspend fun getUserProfile(userId: Int): User? {
+    override suspend fun getUserProfile(): User? {
         val token = "Bearer ${sharedPrefManager.fetchToken()}"
+        val userId = sharedPrefManager.fetchUserId() ?: return null
         val response = userApi.getUserProfile(userId, token)
 
         response.body()?.let {
@@ -145,5 +148,23 @@ class UserServiceImpl(
 
     private fun showToast(message: String?) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    }
+
+    override suspend fun updateUserXpPoints(request: UpdateUserXpPointsRequest): Flow<Boolean> {
+        return flow {
+            val token = "Bearer ${sharedPrefManager.fetchToken()}"
+            val id =
+                sharedPrefManager.fetchUserId() ?: throw IllegalStateException("User ID not found")
+            val response = userApi.updateUserXpPoints(id, token, request)
+
+            if (response.isSuccessful) {
+                emit(true)
+                return@flow
+            }
+
+            Log.e("UserServiceImpl", response.errorBody().toString())
+            Toast.makeText(context, "Failed to update user XP points", Toast.LENGTH_LONG).show()
+            emit(false)
+        }
     }
 }

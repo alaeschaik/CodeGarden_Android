@@ -1,7 +1,5 @@
 package at.ac.fhcampuswien.codegarden.navigation
 
-import androidx.navigation.NavOptions
-
 sealed class Screen(val route: String, val title: String? = null) {
     data object LoginScreen : Screen("login")
     data object PasswordResetScreen : Screen("reset")
@@ -15,4 +13,5 @@ sealed class Screen(val route: String, val title: String? = null) {
     data object ModuleDetailScreen : Screen("moduleDetail", "Module Detail")
     data object ChallengeScreen : Screen("challenge", "Challenges")
     data object QuestionScreen : Screen("question", "Questions")
+    data object ChoiceScreen : Screen("choice", "Choices")
 }

@@ -34,6 +34,5 @@ data class Choice(
 )
 
 data class AnswerChoiceRequest(
-    val content: String,
-    val isCorrect: Boolean
+    val answer: String,
 )

@@ -155,7 +155,7 @@ fun ModuleCard(
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = "${userXpPoints}/${module.totalXpPoints}XP (${(0 / module.totalXpPoints.toFloat() * 100).toInt()}%)",
+                    text = "${userXpPoints}/${module.totalXpPoints}XP (${(userXpPoints / module.totalXpPoints.toFloat() * 100).toInt()}%)",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )

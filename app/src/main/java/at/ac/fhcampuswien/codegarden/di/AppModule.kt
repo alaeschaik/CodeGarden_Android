@@ -37,7 +37,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 interface AppModule {
-    val gsonWithMutableIntStateAdapter: Gson
+    val gson: Gson
+    val sharedPrefManager: SharedPrefManager
+    val applicationContext: Context
     val userApi: UserApi
     val postApi: PostApi
     val commentApi: CommentApi
@@ -54,189 +56,47 @@ interface AppModule {
     val challengeService: ChallengeService
     val questionService: QuestionService
     val choiceService: ChoiceService
-    val sharedPrefManager: SharedPrefManager
-    val applicationContext: Context
 }
 
 class AppModuleImpl(private val appContext: Context) : AppModule {
-    override val gsonWithMutableIntStateAdapter: Gson by lazy {
+    private val retrofitBuilder: Retrofit.Builder by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://api.sheikhs.at/api/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(
+                OkHttpClient.Builder()
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .build()
+            )
+    }
+
+    override val gson: Gson by lazy {
         GsonBuilder()
             .registerTypeAdapter(MutableIntState::class.java, MutableIntStateAdapter())
             .create()
     }
 
+    override val sharedPrefManager: SharedPrefManager by lazy { SharedPrefManagerImpl(appContext) }
+    override val applicationContext: Context get() = appContext
 
-    override val userApi: UserApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.sheikhs.at/api/")
-            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(
-                        20,
-                        TimeUnit.SECONDS
-                    ) // Increase the connection timeout to 20 seconds
-                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
-                    .build()
-            )
-            .build()
-            .create(UserApi::class.java)
-    }
+    private inline fun <reified T> createApi(): T = retrofitBuilder.build().create(T::class.java)
 
+    override val userApi: UserApi get() = createApi()
+    override val postApi: PostApi get() = createApi()
+    override val commentApi: CommentApi get() = createApi()
+    override val moduleApi: ModuleApi get() = createApi()
+    override val sectionApi: SectionApi get() = createApi()
+    override val challengeApi: ChallengeApi get() = createApi()
+    override val questionApi: QuestionApi get() = createApi()
+    override val choiceApi: ChoiceApi get() = createApi()
 
-    override val postApi: PostApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.sheikhs.at/api/")
-            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(
-                        20,
-                        TimeUnit.SECONDS
-                    ) // Increase the connection timeout to 20 seconds
-                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
-                    .build()
-            )
-            .build()
-            .create(PostApi::class.java)
-    }
-    override val commentApi: CommentApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.sheikhs.at/api/")
-            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(
-                        20,
-                        TimeUnit.SECONDS
-                    ) // Increase the connection timeout to 20 seconds
-                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
-                    .build()
-            )
-            .build()
-            .create(CommentApi::class.java)
-    }
-
-    override val moduleApi: ModuleApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.sheikhs.at/api/")
-            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(
-                        20,
-                        TimeUnit.SECONDS
-                    ) // Increase the connection timeout to 20 seconds
-                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
-                    .build()
-            )
-            .build()
-            .create(ModuleApi::class.java)
-    }
-
-    override val sectionApi: SectionApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.sheikhs.at/api/")
-            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(
-                        20,
-                        TimeUnit.SECONDS
-                    ) // Increase the connection timeout to 20 seconds
-                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
-                    .build()
-            )
-            .build()
-            .create(SectionApi::class.java)
-    }
-
-    override val challengeApi: ChallengeApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.sheikhs.at/api/")
-            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(
-                        20,
-                        TimeUnit.SECONDS
-                    ) // Increase the connection timeout to 20 seconds
-                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
-                    .build()
-            )
-            .build()
-            .create(ChallengeApi::class.java)
-    }
-
-    override val questionApi: QuestionApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.sheikhs.at/api/")
-            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(
-                        20,
-                        TimeUnit.SECONDS
-                    ) // Increase the connection timeout to 20 seconds
-                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
-                    .build()
-            )
-            .build()
-            .create(QuestionApi::class.java)
-    }
-
-    override val choiceApi: ChoiceApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.sheikhs.at/api/")
-            .addConverterFactory(GsonConverterFactory.create(gsonWithMutableIntStateAdapter))
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(
-                        20,
-                        TimeUnit.SECONDS
-                    ) // Increase the connection timeout to 20 seconds
-                    .readTimeout(20, TimeUnit.SECONDS) // Increase the read timeout to 20 seconds
-                    .build()
-            )
-            .build()
-            .create(ChoiceApi::class.java)
-    }
-
-    override val sharedPrefManager: SharedPrefManager by lazy {
-        SharedPrefManagerImpl(appContext)
-    }
-    override val applicationContext: Context by lazy {
-        appContext
-    }
-
-    override val userService: UserService by lazy {
-        UserServiceImpl(appContext, userApi, sharedPrefManager)
-    }
-
-    override val postService: PostService by lazy {
-        PostServiceImpl(appContext, postApi, sharedPrefManager)
-    }
-    override val commentService: CommentService by lazy {
-        CommentServiceImpl(appContext, commentApi, sharedPrefManager)
-    }
-
-    override val moduleService: ModuleService by lazy {
-        ModuleServiceImpl(appContext, moduleApi, sharedPrefManager)
-    }
-
-    override val sectionService: SectionService by lazy {
-        SectionServiceImpl(appContext, sectionApi, sharedPrefManager)
-    }
-
-    override val challengeService: ChallengeService by lazy {
-        ChallengeServiceImpl(appContext, challengeApi, sharedPrefManager)
-    }
-
-    override val questionService: QuestionService by lazy {
-        QuestionServiceImpl(appContext, questionApi, sharedPrefManager)
-    }
-
-    override val choiceService: ChoiceService by lazy {
-        ChoiceServiceImpl(appContext, choiceApi, sharedPrefManager)
-    }
+    override val userService: UserService get() = UserServiceImpl(appContext, userApi, sharedPrefManager)
+    override val postService: PostService get() = PostServiceImpl(appContext, postApi, sharedPrefManager)
+    override val commentService: CommentService get() = CommentServiceImpl(appContext, commentApi, sharedPrefManager)
+    override val moduleService: ModuleService get() = ModuleServiceImpl(appContext, moduleApi, sharedPrefManager)
+    override val sectionService: SectionService get() = SectionServiceImpl(appContext, sectionApi, sharedPrefManager)
+    override val challengeService: ChallengeService get() = ChallengeServiceImpl(appContext, challengeApi, sharedPrefManager)
+    override val questionService: QuestionService get() = QuestionServiceImpl(appContext, questionApi, sharedPrefManager)
+    override val choiceService: ChoiceService get() = ChoiceServiceImpl(appContext, choiceApi, sharedPrefManager)
 }

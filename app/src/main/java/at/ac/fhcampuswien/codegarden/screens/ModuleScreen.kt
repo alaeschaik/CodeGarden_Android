@@ -12,42 +12,43 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
-import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
-import at.ac.fhcampuswien.codegarden.viewModels.ModuleViewModel
-import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
-import androidx.compose.runtime.collectAsState
-import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
-import androidx.compose.material3.IconButton
-import at.ac.fhcampuswien.codegarden.navigation.Screen
-import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import at.ac.fhcampuswien.codegarden.CodeGardenApplication.Companion.appModule
 import at.ac.fhcampuswien.codegarden.endpoints.modules.Module
+import at.ac.fhcampuswien.codegarden.navigation.Screen
+import at.ac.fhcampuswien.codegarden.viewModels.ModuleViewModel
+import at.ac.fhcampuswien.codegarden.viewModels.viewModelFactory
+import at.ac.fhcampuswien.codegarden.widgets.SimpleBottomAppBar
+import at.ac.fhcampuswien.codegarden.widgets.SimpleTopAppBar
 
 @Composable
 fun ModuleScreen(navController: NavController) {
     val viewModel = viewModel<ModuleViewModel>(
         factory = viewModelFactory {
             ModuleViewModel(
-                appModule.moduleService,
-                appModule.sharedPrefManager
+                appModule.userService,
+                appModule.moduleService
             )
         }
     )
@@ -103,6 +104,10 @@ fun ModuleCard(
 ) {
     var isEditing by remember { mutableStateOf(false) }
     var editableText by remember { mutableStateOf(module.introduction) }
+    var userXpPoints by remember { mutableFloatStateOf(0f) }
+    viewModel.userDetails { user ->
+        userXpPoints = user.xpPoints
+    }
 
     Card(
         modifier = Modifier
@@ -145,12 +150,12 @@ fun ModuleCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    text = if ((0 / module.totalXpPoints.toFloat() * 100).toInt() == 0) "Start" else "Continue",
+                    text = if ((userXpPoints / module.totalXpPoints.toFloat() * 100).toInt() == 0) "Start" else "Continue",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = "0/${module.totalXpPoints}XP (${(0 / module.totalXpPoints.toFloat() * 100).toInt()}%)",
+                    text = "${userXpPoints}/${module.totalXpPoints}XP (${(0 / module.totalXpPoints.toFloat() * 100).toInt()}%)",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )

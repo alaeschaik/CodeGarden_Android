@@ -1,20 +1,21 @@
 package at.ac.fhcampuswien.codegarden.viewModels
 
-import at.ac.fhcampuswien.codegarden.endpoints.modules.ModuleService
-import at.ac.fhcampuswien.codegarden.utils.SharedPrefManager
 import androidx.lifecycle.ViewModel
-import at.ac.fhcampuswien.codegarden.endpoints.modules.Module
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
 import at.ac.fhcampuswien.codegarden.endpoints.modules.CreateModuleRequest
+import at.ac.fhcampuswien.codegarden.endpoints.modules.Module
+import at.ac.fhcampuswien.codegarden.endpoints.modules.ModuleService
 import at.ac.fhcampuswien.codegarden.endpoints.modules.Section
 import at.ac.fhcampuswien.codegarden.endpoints.modules.UpdateModuleRequest
+import at.ac.fhcampuswien.codegarden.endpoints.users.User
+import at.ac.fhcampuswien.codegarden.endpoints.users.UserService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ModuleViewModel(
-    private val moduleService: ModuleService,
-    private val sharedPrefManager: SharedPrefManager
+    private val userService: UserService,
+    private val moduleService: ModuleService
 ) : ViewModel() {
 
     private val _modules = MutableStateFlow<List<Module>>(emptyList())
@@ -96,6 +97,14 @@ class ModuleViewModel(
         viewModelScope.launch {
             moduleService.getModuleSections(id).collect { sections ->
                 onSectionsFetched(sections)
+            }
+        }
+    }
+
+    fun userDetails(onDetailsFetched: (User) -> Unit) {
+        viewModelScope.launch {
+            userService.getUserProfile()?.let {
+                onDetailsFetched(it)
             }
         }
     }

@@ -33,5 +33,11 @@ interface UserApi {
         @Header("Authorization") token: String,
         @Body request: UpdateProfileRequest
     ): Response<Unit>
-}
 
+    @PUT("users/{id}/xp-points")
+    suspend fun updateUserXpPoints(
+        @Path("id") id: Int,
+        @Header("Authorization") token: String,
+        @Body request: UpdateUserXpPointsRequest
+    ): Response<Boolean>
+}

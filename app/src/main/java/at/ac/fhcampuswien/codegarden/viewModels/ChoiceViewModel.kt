@@ -2,9 +2,9 @@ package at.ac.fhcampuswien.codegarden.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import at.ac.fhcampuswien.codegarden.endpoints.challenges.ChallengeService
+import at.ac.fhcampuswien.codegarden.endpoints.choices.AnswerChoiceRequest
 import at.ac.fhcampuswien.codegarden.endpoints.choices.Choice
-import at.ac.fhcampuswien.codegarden.endpoints.questions.AnswerQuestionRequest
+import at.ac.fhcampuswien.codegarden.endpoints.choices.ChoiceService
 import at.ac.fhcampuswien.codegarden.endpoints.questions.Question
 import at.ac.fhcampuswien.codegarden.endpoints.questions.QuestionService
 import at.ac.fhcampuswien.codegarden.endpoints.users.UpdateUserXpPointsRequest
@@ -13,34 +13,34 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class QuestionViewModel(
-    private val challengeService: ChallengeService,
-    private val questionService: QuestionService,
+class ChoiceViewModel(
     private val userService: UserService,
-    challengeId: Int
+    private val choiceService: ChoiceService,
+    private val questionService: QuestionService,
+    questionId: Int
 ) : ViewModel() {
 
-    private val _questions = MutableStateFlow<List<Question>>(emptyList())
-    val questions = _questions.asStateFlow()
+    private val _choices = MutableStateFlow<List<Choice>>(emptyList())
+    val choices = _choices.asStateFlow()
 
     init {
-        getChallengeQuestions(challengeId) { questions ->
-            _questions.value = questions
+        getQuestionChoices(questionId) { choices ->
+            _choices.value = choices
         }
     }
 
-    private fun getChallengeQuestions(id: Int, onQuestionsFetched: (questions: List<Question>) -> Unit) {
+    private fun getQuestionChoices(id: Int, onChoicesFetched: (choices: List<Choice>) -> Unit) {
         viewModelScope.launch {
-            challengeService.getChallengeQuestions(id).collect { questions ->
-                onQuestionsFetched(questions)
+            questionService.getQuestionChoices(id).collect { choices ->
+                onChoicesFetched(choices)
             }
         }
     }
 
-    fun getQuestionChoices(id: Int, onChoicesFetched: (choices: List<Choice>) -> Unit) {
+    fun answerChoice(id: Int, request: AnswerChoiceRequest, onAnswered: (Boolean) -> Unit) {
         viewModelScope.launch {
-            questionService.getQuestionChoices(id).collect { choices ->
-                onChoicesFetched(choices)
+            choiceService.answerChoice(id, request).collect { success ->
+                onAnswered(success)
             }
         }
     }
@@ -54,10 +54,10 @@ class QuestionViewModel(
         }
     }
 
-    fun answerQuestion(id: Int, request: AnswerQuestionRequest, onAnswered: (Boolean) -> Unit) {
+    fun getQuestion(id: Int, onQuestionFetched: (Question) -> Unit) {
         viewModelScope.launch {
-            questionService.answerQuestion(id, request).collect { success ->
-                onAnswered(success)
+            questionService.getQuestion(id).collect { question ->
+                onQuestionFetched(question)
             }
         }
     }

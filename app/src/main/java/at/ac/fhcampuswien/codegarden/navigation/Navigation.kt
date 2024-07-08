@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import at.ac.fhcampuswien.codegarden.screens.ChallengeScreen
+import at.ac.fhcampuswien.codegarden.screens.ChoiceScreen
 import at.ac.fhcampuswien.codegarden.screens.CommunityScreen
 import at.ac.fhcampuswien.codegarden.screens.CreateModuleScreen
 import at.ac.fhcampuswien.codegarden.screens.CreatePostScreen
@@ -74,6 +75,12 @@ fun Navigation() {
         composable("${Screen.QuestionScreen.route}/{challengeId}") { backStackEntry ->
             val challengeId = backStackEntry.arguments?.getString("challengeId")?.toInt() ?: return@composable
             QuestionScreen(challengeId = challengeId, navController = navController)
+        }
+
+        composable("${Screen.ChoiceScreen.route}/{questionId}") { backStackEntry ->
+            val questionId =
+                backStackEntry.arguments?.getString("questionId")?.toInt() ?: return@composable
+            ChoiceScreen(questionId = questionId, navController = navController)
         }
     }
 }

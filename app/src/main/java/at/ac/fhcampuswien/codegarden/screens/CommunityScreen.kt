@@ -323,7 +323,7 @@ fun PostCard(
                     modifier = Modifier.fillMaxWidth()
                 )
             } else {
-                Text(text = editableText)
+                Text(text = post.content)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
